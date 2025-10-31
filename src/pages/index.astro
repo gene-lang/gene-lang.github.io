@@ -81,16 +81,15 @@ const ecosystem = [
 			in-browser execution required.
 		</p>
 		<pre aria-label="Gene code example">
-<code class="language-gene"># Async workflows and pattern matching
-(fn process-data [data]
-  (match (len data)
-    0 "empty"
-    1 "single item"
-    _ (concat "has " (str (len data)) " items")))
+<code class="language-gene"># Summing with a simple loop
+(fn sum [values]
+  (var total 0)
+  (for value in values
+    (total = (+ total value)))
+  total)
 
-(async
-  (let data [1 2 3 4 5])
-  (print "Data" (process-data data)))</code>
+(var data [1 2 3 4 5])
+(println "Total:" (sum data))</code>
 		</pre>
 	</section>
 

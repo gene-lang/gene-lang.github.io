@@ -3,52 +3,52 @@ import Layout from '../../layouts/Layout.astro';
 
 const examples = [
 	{
-		title: 'Composable pipelines',
-		description: 'Chain data transformations with clear, declarative macros.',
-		code: `(defmacro pipeline [value &steps]
-  (reduce (fn [acc step] (list (first step) acc (rest step)))
-          value
-          steps))
+		title: 'Loop-friendly accumulation',
+		description: 'Use familiar loops and assignment to process data step by step.',
+		code: `(fn sum [values]
+  (var total 0)
+  (for value in values
+    (total = (+ total value)))
+  total)
 
-(let result
-  (pipeline [1 2 3 4 5]
-    (map (fn [x] (* x 2)))
-    (filter (fn [x] (> x 6)))
-    (reduce + 0)))
-
-(print "Sum:" result)`,
+(var data [1 2 3 4 5])
+(println "Total:" (sum data))`,
 	},
 	{
-		title: 'Pattern matching on values',
-		description: 'Express branching logic with clear pattern matching.',
-		code: `(fn describe-number [x]
-  (match x
-    1 "one"
-    2 "two"
-    3 "three"
-    _ "many"))
+		title: 'Lightweight objects',
+		description: 'Define small classes with methods and stateful properties.',
+		code: `(class Counter
+  (.ctor []
+    (/value = 0))
 
-(print "Description:" (describe-number 5))`,
+  (.fn inc []
+    (/value = (+ /value 1))
+    /value))
+
+(var counter (new Counter))
+(counter .inc)
+(println "Counter value:" (counter .inc))`,
 	},
 	{
-		title: 'Async workflows',
-		description: 'Execute asynchronous operations with Gene\'s async system.',
-		code: `(fn delayed-message [msg delay-ms]
-  (gene/sleep_async delay-ms)
-  (on_success msg))
+		title: 'Async counters',
+		description: 'Compose asynchronous work with futures and await.',
+		code: `(fn count_async [max]
+  (async
+    (do
+      (var count 0)
+      (while (< count max)
+        (count = (+ count 1)))
+      count)))
 
-(let future (delayed-message "Hello from async!" 1000))
-(future .on_success (fnx []
-  (print "Message received:")))
-
-(gene/sleep 1500)  # Wait for async operation`,
+(var result (await (count_async 3)))
+(println "Finished at:" result)`,
 	},
 ];
 ---
 
 <Layout
 	title="Gene Code Examples"
-	description="Curated Gene code snippets that demonstrate idiomatic use of macros, pattern matching, and async workflows."
+	description="Curated Gene code snippets that demonstrate looping, lightweight objects, and async workflows."
 >
 	<header class="page-header">
 		<h1>Examples</h1>

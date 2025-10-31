@@ -20,6 +20,12 @@ website/
 └── tsconfig.json         # TypeScript settings for editor tooling
 ```
 
+## Prerequisites
+
+- Node.js 18+ (Astro recommends 18.17 or 20+)
+- npm (bundled with Node.js)
+- Optional: locally built Gene CLI (`./gene/bin/gene`) if you want to run the showcased Gene snippets
+
 ## Local development
 
 ```bash
@@ -47,6 +53,10 @@ The build artefacts are emitted to `website/dist/`. Deploy the contents of this 
 - Port documentation from `gene/docs/` into `src/pages/docs/` using OpenSpec proposals for substantial changes.
 - Prefer Markdown (`.md`/`.mdx`) for long-form documentation and `.astro` files for interactive layouts or custom
   components.
+- Keep featured snippets runnable; from the workspace root you can validate them with:
+  ```bash
+  ./gene/bin/gene eval '<gene-code>'
+  ```
 
 ## Deployment checklist
 
