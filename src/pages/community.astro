@@ -1,0 +1,142 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+	title="Gene Community"
+	description="Connect with the Gene programming language community, contribute to the runtime, and stay informed."
+>
+	<header class="page-header">
+		<h1>Community</h1>
+		<p>
+			Gene grows through open collaboration. Join discussions, share feedback, and help shape the roadmap through
+			spec-driven development.
+		</p>
+	</header>
+
+	<section class="grid">
+		<article class="card">
+			<h2>GitHub</h2>
+			<p>
+				Track development, open issues, and submit pull requests. The runtime, compiler, and website all live in the
+				public repository.
+			</p>
+			<a class="button-link" href="https://github.com/gcao/gene" rel="noopener">github.com/gcao/gene →</a>
+		</article>
+
+		<article class="card">
+			<h2>OpenSpec proposals</h2>
+			<p>
+				Larger changes start with an OpenSpec proposal. Read existing specs, or draft a new one to propose language,
+				tooling, or documentation improvements.
+			</p>
+			<a class="button-link" href="https://github.com/gcao/gene/tree/main/openspec" rel="noopener">
+				OpenSpec workflow →
+			</a>
+		</article>
+
+		<article class="card">
+			<h2>Chat &amp; support</h2>
+			<p>
+				Join the community channel (Discord/Matrix planned) to ask questions, pair on debugging, or discuss Gene&apos;s roadmap.
+			</p>
+			<span class="coming-soon">Community chat launching soon</span>
+		</article>
+
+		<article class="card">
+			<h2>Showcase</h2>
+			<p>
+				Share projects built with Gene. We feature libraries, production use cases, and experiments from the community.
+			</p>
+			<a class="button-link" href="mailto:hello@genelang.org">Submit a project →</a>
+		</article>
+	</section>
+
+	<section class="newsletter">
+		<h2>Stay in the loop</h2>
+		<p>
+			A lightweight newsletter and RSS feed will launch with the first public release. Until then, watch the GitHub
+			repository for updates.
+		</p>
+	</section>
+</Layout>
+
+<style>
+	.page-header {
+		display: grid;
+		gap: 0.75rem;
+		margin-bottom: 3rem;
+	}
+
+	.page-header h1 {
+		margin: 0;
+		font-size: clamp(2.1rem, 3vw, 2.7rem);
+	}
+
+	.page-header p {
+		color: var(--color-muted);
+		max-width: 44rem;
+		margin: 0;
+	}
+
+	.grid {
+		display: grid;
+		gap: 1.5rem;
+		grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+	}
+
+	.card {
+		background: var(--color-surface);
+		border-radius: 1.1rem;
+		border: 1px solid var(--color-border);
+		padding: 1.7rem;
+		box-shadow: 0 18px 32px rgba(15, 23, 42, 0.12);
+		display: grid;
+		gap: 0.75rem;
+	}
+
+	.card h2 {
+		margin: 0;
+		font-size: 1.4rem;
+	}
+
+	.card p {
+		margin: 0;
+		color: var(--color-muted);
+	}
+
+	.button-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		color: var(--color-accent);
+		font-weight: 600;
+	}
+
+	.coming-soon {
+		color: var(--color-muted);
+		font-size: 0.9rem;
+		font-style: italic;
+	}
+
+	.newsletter {
+		margin-top: 4rem;
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+		border-radius: 1.1rem;
+		padding: 1.5rem;
+		box-shadow: 0 16px 28px rgba(15, 23, 42, 0.12);
+		display: grid;
+		gap: 0.75rem;
+		max-width: 40rem;
+	}
+
+	.newsletter h2 {
+		margin: 0;
+	}
+
+	.newsletter p {
+		margin: 0;
+		color: var(--color-muted);
+	}
+</style>

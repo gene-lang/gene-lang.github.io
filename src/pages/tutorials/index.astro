@@ -1,0 +1,130 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout
+	title="Gene Tutorials"
+	description="Progressive tutorials that teach the Gene programming language through hands-on projects."
+>
+	<header class="page-header">
+		<h1>Tutorials</h1>
+		<p>
+			Gene tutorials guide you through real-world projects step by step. Each module reinforces language
+			fundamentals, introduces new runtime concepts, and highlights best practices for macros, async flows, and
+			modular design.
+		</p>
+	</header>
+
+	<section class="tutorial-list">
+		<article class="tutorial-card">
+			<h2>Foundations: From REPL to CLI tool</h2>
+			<p>
+				Explore the basics of the language, define functions, and build a command-line utility that parses input and
+				produces structured output.
+			</p>
+			<span class="meta">Status: In progress &middot; Target audience: New to Gene</span>
+		</article>
+
+		<article class="tutorial-card">
+			<h2>Macros in production</h2>
+			<p>
+				Learn how Gene&apos;s macro system lets you craft domain-specific abstractions without sacrificing
+				performance or readability.
+			</p>
+			<span class="meta">Status: Drafting &middot; Target audience: Intermediate</span>
+		</article>
+
+		<article class="tutorial-card">
+			<h2>Async orchestration and services</h2>
+			<p>
+				Compose futures, coordinate parallel tasks, and surface insights from asynchronous data sources with the Gene
+				async runtime.
+			</p>
+			<span class="meta">Status: Planned &middot; Target audience: Intermediate to advanced</span>
+		</article>
+	</section>
+
+	<section class="cta">
+		<h2>Want to contribute a tutorial?</h2>
+		<p>
+			We welcome community-authored walkthroughs. Share your idea through an OpenSpec proposal or open a GitHub issue
+			to coordinate.
+		</p>
+		<a class="button primary" href="https://github.com/gcao/gene/discussions" rel="noopener">Discuss a tutorial idea</a>
+	</section>
+</Layout>
+
+<style>
+	.page-header {
+		display: grid;
+		gap: 0.75rem;
+		margin-bottom: 3rem;
+	}
+
+	.page-header h1 {
+		margin: 0;
+		font-size: clamp(2.1rem, 3vw, 2.7rem);
+	}
+
+	.page-header p {
+		color: var(--color-muted);
+		max-width: 44rem;
+		margin: 0;
+	}
+
+	.tutorial-list {
+		display: grid;
+		gap: 1.5rem;
+	}
+
+	.tutorial-card {
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+		border-radius: 1.1rem;
+		padding: 1.75rem;
+		box-shadow: 0 18px 32px rgba(15, 23, 42, 0.12);
+		display: grid;
+		gap: 0.85rem;
+	}
+
+	.tutorial-card h2 {
+		margin: 0;
+		font-size: 1.55rem;
+	}
+
+	.tutorial-card p {
+		margin: 0;
+		color: var(--color-muted);
+	}
+
+	.meta {
+		font-size: 0.85rem;
+		color: var(--color-muted);
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+	}
+
+	.cta {
+		margin-top: 4rem;
+		display: grid;
+		gap: 0.75rem;
+		max-width: 36rem;
+	}
+
+	.cta p {
+		margin: 0;
+		color: var(--color-muted);
+	}
+
+	.button {
+		border-radius: 999px;
+		padding: 0.65rem 1.6rem;
+		font-weight: 600;
+		display: inline-flex;
+		align-items: center;
+		border: 1px solid transparent;
+		background: var(--color-accent);
+		color: white;
+		box-shadow: 0 12px 24px rgba(37, 99, 235, 0.2);
+	}
+</style>

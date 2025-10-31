@@ -1,0 +1,195 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const sections = [
+	{
+		title: 'Language fundamentals',
+		description: 'Syntax, evaluation rules, macros, and the standard library core.',
+		items: [
+			{ label: 'Gene principles', href: '/docs/language/principles' },
+			{ label: 'Macro system overview', href: '/docs/language/macros' },
+			{ label: 'Pattern matching guide', href: '/docs/language/pattern-matching' },
+		],
+	},
+	{
+		title: 'Runtime & architecture',
+		description: 'Dive into the compiler, bytecode VM, and performance characteristics.',
+		items: [
+			{ label: 'Bytecode VM internals', href: '/docs/runtime/vm' },
+			{ label: 'Compiler pipeline', href: '/docs/runtime/compiler' },
+			{ label: 'Performance tuning', href: '/docs/runtime/performance' },
+		],
+	},
+	{
+		title: 'Standard library',
+		description: 'Reference material for built-in modules, collections, async, and tooling.',
+		items: [
+			{ label: 'Core modules', href: '/docs/library/core' },
+			{ label: 'Async primitives', href: '/docs/library/async' },
+			{ label: 'Interop & FFI', href: '/docs/library/ffi' },
+		],
+	},
+];
+---
+
+<Layout
+	title="Gene Documentation"
+	description="Browse language guides, VM architecture notes, and standard library references for the Gene programming language."
+>
+	<header class="page-header">
+		<h1>Documentation</h1>
+		<p>
+			The Gene docs are being ported from the core repository to this website. Start with the language fundamentals,
+			then explore architecture guides that dissect the compiler and bytecode virtual machine.
+		</p>
+		<div class="callout">
+			<strong>Looking for a specific topic?</strong>
+			<span>
+				Check the <code>gene/docs/</code> directory in the repository while the migration is underway. Each document
+				will be published here as it is reviewed and updated.
+			</span>
+		</div>
+	</header>
+
+	<section class="section-list">
+		{sections.map((section) => (
+			<article class="section-card">
+				<h2>{section.title}</h2>
+				<p>{section.description}</p>
+				<ul>
+					{section.items.map((item) => (
+						<li>
+							<a href={item.href}>{item.label}</a>
+						</li>
+					))}
+				</ul>
+			</article>
+		))}
+	</section>
+
+	<section class="contribute">
+		<h2>Help improve the docs</h2>
+		<p>
+			Found a gap? Open an issue or pull request via the OpenSpec workflow. Contributions are welcome for tutorials,
+			examples, and architecture notes.
+		</p>
+		<a class="button primary" href="https://github.com/gcao/gene" rel="noopener">Contribute on GitHub</a>
+	</section>
+</Layout>
+
+<style>
+	.page-header {
+		display: grid;
+		gap: 1rem;
+		margin-bottom: 3rem;
+	}
+
+	.page-header h1 {
+		margin: 0;
+		font-size: clamp(2.1rem, 3vw, 2.7rem);
+	}
+
+	.page-header p {
+		max-width: 46rem;
+		color: var(--color-muted);
+		margin: 0;
+	}
+
+	.callout {
+		display: grid;
+		gap: 0.35rem;
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+		border-radius: 1rem;
+		padding: 1.2rem 1.5rem;
+		box-shadow: 0 16px 30px rgba(15, 23, 42, 0.15);
+	}
+
+	.callout strong {
+		font-size: 0.95rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--color-muted);
+	}
+
+	.callout span {
+		color: var(--color-muted);
+	}
+
+	.section-list {
+		display: grid;
+		gap: 1.5rem;
+	}
+
+	.section-card {
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+		border-radius: 1.1rem;
+		padding: 1.7rem;
+		box-shadow: 0 20px 32px rgba(15, 23, 42, 0.12);
+		display: grid;
+		gap: 1rem;
+	}
+
+	.section-card h2 {
+		margin: 0;
+		font-size: 1.5rem;
+	}
+
+	.section-card p {
+		margin: 0;
+		color: var(--color-muted);
+	}
+
+	.section-card ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: grid;
+		gap: 0.6rem;
+	}
+
+	.section-card li a {
+		color: var(--color-text);
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+	}
+
+	.section-card li a::after {
+		content: '→';
+		opacity: 0;
+		transform: translateX(-6px);
+		transition: opacity 0.15s ease, transform 0.15s ease;
+	}
+
+	.section-card li a:hover::after,
+	.section-card li a:focus-visible::after {
+		opacity: 1;
+		transform: translateX(0);
+	}
+
+	.contribute {
+		margin-top: 4rem;
+		display: grid;
+		gap: 1rem;
+		max-width: 40rem;
+	}
+
+	.contribute p {
+		color: var(--color-muted);
+		margin: 0;
+	}
+
+	.button {
+		border-radius: 999px;
+		padding: 0.65rem 1.6rem;
+		font-weight: 600;
+		display: inline-flex;
+		align-items: center;
+		border: 1px solid transparent;
+		background: var(--color-accent);
+		color: white;
+		box-shadow: 0 12px 24px rgba(37, 99, 235, 0.2);
+	}
+</style>

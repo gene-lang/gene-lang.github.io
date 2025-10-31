@@ -1,0 +1,317 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const featureHighlights = [
+	{
+		title: 'Expressive Lisp Core',
+		description:
+			'Build complex systems with lightweight macros, first-class functions, and intuitive metaprogramming.',
+	},
+	{
+		title: 'Optimized Bytecode VM',
+		description: 'Ship high-performance applications powered by a Nim-based virtual machine tuned for speed.',
+	},
+	{
+		title: 'Pragmatic Concurrency',
+		description:
+			'Compose asynchronous workflows with a predictable async/await model and deterministic futures.',
+	},
+];
+
+const ecosystem = [
+	{
+		title: 'Language Reference',
+		description: 'Dive into the syntax, semantics, and runtime behavior of Gene.',
+		href: '/docs',
+	},
+	{
+		title: 'Tutorials',
+		description: 'Follow structured guides that walk through building real Gene programs.',
+		href: '/tutorials',
+	},
+	{
+		title: 'Community',
+		description: 'Join discussions, report issues, and contribute to the language runtime.',
+		href: '/community',
+	},
+];
+---
+
+<Layout title="Gene Programming Language" description="Gene is a modern Lisp with a bytecode VM, expressive macros, and a growing ecosystem.">
+	<section class="hero">
+		<div class="hero-content">
+			<p class="eyebrow">Introducing Gene</p>
+			<h1>Modern Lisp craftsmanship with systems-level performance.</h1>
+			<p class="lead">
+				Gene pairs the elegance of Lisp syntax with a pragmatic toolchain. Write macros, orchestrate async tasks,
+				and target a fast bytecode VM — all in one cohesive language.
+			</p>
+			<div class="cta-group">
+				<a class="button primary" href="/getting-started">Start building</a>
+				<a class="button secondary" href="/docs">Browse docs</a>
+			</div>
+		</div>
+		<div class="hero-spotlight">
+			<h2>Why Gene?</h2>
+			<ul>
+				<li>Homoiconic language with a powerful macro system</li>
+				<li>Optimized Nim runtime and bytecode compiler</li>
+				<li>Interop-friendly design for native extensions</li>
+				<li>Composable async and pattern matching support</li>
+			</ul>
+		</div>
+	</section>
+
+	<section class="features">
+		<h2>Build without compromise</h2>
+		<div class="feature-grid">
+			{featureHighlights.map((feature) => (
+				<article class="feature-card">
+					<h3>{feature.title}</h3>
+					<p>{feature.description}</p>
+				</article>
+			))}
+		</div>
+	</section>
+
+	<section class="code-showcase">
+		<h2>Gene in action</h2>
+		<p>
+			Explore idiomatic patterns with annotated examples. The website highlights code and explains each step — no
+			in-browser execution required.
+		</p>
+		<pre aria-label="Gene code example">
+<code class="language-gene"># Async workflows and pattern matching
+(fn process-data [data]
+  (match (len data)
+    0 "empty"
+    1 "single item"
+    _ (concat "has " (str (len data)) " items")))
+
+(async
+  (let data [1 2 3 4 5])
+  (print "Data" (process-data data)))</code>
+		</pre>
+	</section>
+
+	<section class="ecosystem">
+		<h2>Choose your next stop</h2>
+		<div class="ecosystem-grid">
+			{ecosystem.map((item) => (
+				<a class="ecosystem-card" href={item.href}>
+					<h3>{item.title}</h3>
+					<p>{item.description}</p>
+					<span aria-hidden="true">→</span>
+				</a>
+			))}
+		</div>
+	</section>
+
+	<section class="community-invite">
+		<h2>Open source and community-driven</h2>
+		<p>
+			Gene is crafted in the open. Share feedback, propose specs, and help shape the language runtime, compiler,
+			and tools.
+		</p>
+		<a class="button primary" href="https://github.com/gcao/gene" rel="noopener">
+			Contribute on GitHub
+		</a>
+	</section>
+</Layout>
+
+<style>
+	.hero {
+		display: grid;
+		gap: 2.5rem;
+		align-items: start;
+	}
+
+	.hero-content {
+		display: flex;
+		flex-direction: column;
+		gap: 1.25rem;
+	}
+
+	.eyebrow {
+		text-transform: uppercase;
+		letter-spacing: 0.18em;
+		font-size: 0.75rem;
+		font-weight: 600;
+		color: var(--color-muted);
+		margin: 0;
+	}
+
+	h1 {
+		font-size: clamp(2.4rem, 4vw, 3.1rem);
+		line-height: 1.1;
+		margin: 0;
+	}
+
+	.lead {
+		font-size: 1.15rem;
+		max-width: 36rem;
+		color: var(--color-muted);
+		margin: 0;
+	}
+
+	.cta-group {
+		display: flex;
+		gap: 1rem;
+		flex-wrap: wrap;
+	}
+
+	.button {
+		border-radius: 999px;
+		padding: 0.75rem 1.8rem;
+		font-weight: 600;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.4rem;
+		border: 1px solid transparent;
+		transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease;
+	}
+
+	.button.primary {
+		background: var(--color-accent);
+		color: white;
+		box-shadow: 0 12px 28px rgba(37, 99, 235, 0.2);
+	}
+
+	.button.primary:hover,
+	.button.primary:focus-visible {
+		transform: translateY(-2px);
+		box-shadow: 0 16px 32px rgba(37, 99, 235, 0.25);
+	}
+
+	.button.secondary {
+		border-color: var(--color-border);
+		color: var(--color-text);
+		background: transparent;
+	}
+
+	.hero-spotlight {
+		background: var(--color-surface);
+		border-radius: 1.25rem;
+		border: 1px solid var(--color-border);
+		padding: 1.75rem;
+		box-shadow: 0 20px 36px rgba(15, 23, 42, 0.15);
+	}
+
+	.hero-spotlight h2 {
+		margin-top: 0;
+		margin-bottom: 1rem;
+		font-size: 1.3rem;
+	}
+
+	.hero-spotlight ul {
+		margin: 0;
+		padding-left: 1.2rem;
+		display: grid;
+		gap: 0.65rem;
+		color: var(--color-muted);
+	}
+
+	.features {
+		margin-top: 5rem;
+	}
+
+	.features h2,
+	.code-showcase h2,
+	.ecosystem h2,
+	.community-invite h2 {
+		font-size: 2rem;
+		margin-bottom: 1rem;
+	}
+
+	.feature-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+		gap: 1.5rem;
+	}
+
+	.feature-card {
+		background: var(--color-surface);
+		border-radius: 1rem;
+		border: 1px solid var(--color-border);
+		padding: 1.5rem;
+		box-shadow: 0 18px 30px rgba(15, 23, 42, 0.1);
+	}
+
+	.feature-card h3 {
+		margin-top: 0;
+		margin-bottom: 0.75rem;
+		font-size: 1.25rem;
+	}
+
+	.feature-card p {
+		margin: 0;
+		color: var(--color-muted);
+	}
+
+	.code-showcase {
+		margin-top: 5rem;
+	}
+
+	.code-showcase p {
+		max-width: 42rem;
+		color: var(--color-muted);
+	}
+
+	.ecosystem {
+		margin-top: 5rem;
+	}
+
+	.ecosystem-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+		gap: 1.25rem;
+	}
+
+	.ecosystem-card {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		padding: 1.5rem;
+		border-radius: 1rem;
+		border: 1px solid var(--color-border);
+		background: var(--color-surface);
+		color: var(--color-text);
+		font-weight: 500;
+		box-shadow: 0 16px 24px rgba(15, 23, 42, 0.12);
+		transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+	}
+
+	.ecosystem-card:hover,
+	.ecosystem-card:focus-visible {
+		transform: translateY(-4px);
+		box-shadow: 0 24px 32px rgba(15, 23, 42, 0.18);
+		border-color: var(--color-accent);
+	}
+
+	.ecosystem-card span {
+		margin-left: auto;
+		font-size: 1.4rem;
+	}
+
+	.community-invite {
+		margin-top: 5rem;
+		text-align: center;
+		display: grid;
+		gap: 1rem;
+		justify-items: center;
+	}
+
+	.community-invite p {
+		max-width: 36rem;
+		color: var(--color-muted);
+		margin: 0;
+	}
+
+	@media (min-width: 880px) {
+		.hero {
+			grid-template-columns: 3fr 2fr;
+			align-items: stretch;
+		}
+	}
+</style>

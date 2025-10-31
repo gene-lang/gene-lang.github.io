@@ -1,0 +1,180 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+	title="Getting Started with Gene"
+	description="Install the Gene toolchain, build the compiler, and run your first program in minutes."
+>
+	<section class="hero">
+		<h1>Getting started</h1>
+		<p class="intro">
+			Follow the steps below to install the Gene runtime, compile from source, and run your first program. Gene
+			builds on Nim, so the same instructions work across macOS, Linux, and Windows.
+		</p>
+		<div class="quick-actions">
+			<a class="button primary" href="https://github.com/gcao/gene" rel="noopener">View source on GitHub</a>
+			<a class="button secondary" href="/docs">Explore documentation</a>
+		</div>
+	</section>
+
+	<section class="step">
+		<h2>1. Install prerequisites</h2>
+		<ul>
+			<li>
+				Install <a href="https://nim-lang.org/install.html" rel="noopener">Nim 1.6 or newer</a> with your preferred
+				package manager.
+			</li>
+			<li>Ensure a C compiler is available (`clang`, `gcc`, or the MSVC toolchain on Windows).</li>
+			<li>Optional but recommended: install <code>git</code> to fetch updates.</li>
+		</ul>
+	</section>
+
+	<section class="step">
+		<h2>2. Clone the repository</h2>
+		<pre aria-label="Clone the Gene repository">
+<code class="language-bash">git clone https://github.com/gcao/gene.git
+cd gene</code>
+		</pre>
+		<p>If you are contributing, fork the repository first and add your fork as the origin remote.</p>
+	</section>
+
+	<section class="step">
+		<h2>3. Build the Gene compiler</h2>
+		<p>
+			Gene ships as a Nim project. Use the bundled <code>nimble</code> tasks to build the bytecode VM and tooling.
+		</p>
+		<pre aria-label="Build the Gene executable">
+<code class="language-bash">cd gene
+nimble build</code>
+		</pre>
+		<p>
+			The compiled binary is placed in <code>gene/bin/gene</code>. You can also build directly with Nim for faster
+			iterative development:
+		</p>
+		<pre aria-label="Alternative Nim build command">
+<code class="language-bash">nim c -o:gene src/gene.nim</code>
+		</pre>
+	</section>
+
+	<section class="step">
+		<h2>4. Verify your installation</h2>
+		<p>Run the CLI to confirm everything is wired up:</p>
+		<pre aria-label="Verify the Gene CLI">
+<code class="language-bash">./bin/gene --help
+./bin/gene eval '(+ 1 2 3)'</code>
+		</pre>
+		<p>
+			You can also try the interactive REPL: <code>./bin/gene repl</code>. The REPL provides a fast feedback loop for
+			exploring APIs and macros.
+		</p>
+	</section>
+
+	<section class="step">
+		<h2>5. Run your first program</h2>
+		<p>Create a file named <code>hello.gene</code> with the following contents:</p>
+		<pre aria-label="Hello world in Gene">
+<code class="language-gene"># hello.gene
+(print "Hello from Gene!")</code>
+		</pre>
+		<p>Execute the program with:</p>
+		<pre aria-label="Run a Gene program">
+<code class="language-bash">./bin/gene run hello.gene</code>
+		</pre>
+	</section>
+
+	<section class="step">
+		<h2>Where to go next</h2>
+		<ul class="next-steps">
+			<li>
+				Read the <a href="/docs">documentation</a> for macros, pattern matching, async, and the object system.
+			</li>
+			<li>Browse the <a href="/examples">examples gallery</a> for idiomatic patterns and snippets.</li>
+			<li>
+				Check <code>gene/docs/</code> in the repository for additional design documents that are being ported to the
+				website.
+			</li>
+		</ul>
+	</section>
+</Layout>
+
+<style>
+	.hero {
+		display: grid;
+		gap: 1.5rem;
+		margin-bottom: 2rem;
+	}
+
+	.hero h1 {
+		font-size: clamp(2rem, 3vw, 2.6rem);
+		margin: 0;
+	}
+
+	.intro {
+		margin: 0;
+		max-width: 44rem;
+		color: var(--color-muted);
+		font-size: 1.05rem;
+	}
+
+	.quick-actions {
+		display: flex;
+		gap: 1rem;
+		flex-wrap: wrap;
+	}
+
+	.button {
+		border-radius: 999px;
+		padding: 0.65rem 1.6rem;
+		font-weight: 600;
+		display: inline-flex;
+		align-items: center;
+		border: 1px solid transparent;
+	}
+
+	.button.primary {
+		background: var(--color-accent);
+		color: white;
+		box-shadow: 0 12px 24px rgba(37, 99, 235, 0.2);
+	}
+
+	.button.secondary {
+		border: 1px solid var(--color-border);
+		color: var(--color-text);
+	}
+
+	.step {
+		margin-top: 3rem;
+	}
+
+	.step h2 {
+		margin-bottom: 0.75rem;
+		font-size: 1.6rem;
+	}
+
+	.step p {
+		color: var(--color-muted);
+		max-width: 46rem;
+	}
+
+	.step ul {
+		list-style: disc;
+		padding-left: 1.2rem;
+		color: var(--color-muted);
+		display: grid;
+		gap: 0.5rem;
+	}
+
+	.next-steps {
+		list-style: disc;
+		padding-left: 1.2rem;
+		color: var(--color-muted);
+		display: grid;
+		gap: 0.4rem;
+		max-width: 44rem;
+	}
+
+	pre {
+		margin-top: 1rem;
+	}
+</style>
