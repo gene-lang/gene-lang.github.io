@@ -4,28 +4,28 @@ import Layout from '../../layouts/Layout.astro';
 const sections = [
 	{
 		title: 'Language fundamentals',
-		description: 'Syntax, evaluation rules, macros, and the standard library core.',
+		description: 'The Gene Data Structure, syntax, evaluation rules, macros, and the core library.',
 		items: [
-			{ label: 'Gene principles', href: '/docs/language/principles' },
+			{ label: 'Gene Data Structure & principles', href: '/docs/language/principles' },
 			{ label: 'Macro system overview', href: '/docs/language/macros' },
 			{ label: 'Pattern matching guide', href: '/docs/language/pattern-matching' },
 		],
 	},
 	{
 		title: 'Runtime & architecture',
-		description: 'Dive into the compiler, bytecode VM, and performance characteristics.',
+		description: 'Compiler pipeline, bytecode VM with ~7.5M calls/sec, and GIR caching.',
 		items: [
 			{ label: 'Bytecode VM internals', href: '/docs/runtime/vm' },
-			{ label: 'Compiler pipeline', href: '/docs/runtime/compiler' },
+			{ label: 'GIR (Gene IR) format', href: '/docs/runtime/gir' },
 			{ label: 'Performance tuning', href: '/docs/runtime/performance' },
 		],
 	},
 	{
 		title: 'Standard library',
-		description: 'Reference material for built-in modules, collections, async, and tooling.',
+		description: 'Built-in modules, collections, async primitives, and File I/O.',
 		items: [
 			{ label: 'Core modules', href: '/docs/library/core' },
-			{ label: 'Async primitives', href: '/docs/library/async' },
+			{ label: 'Async & io namespace', href: '/docs/library/async' },
 			{ label: 'Interop & FFI', href: '/docs/library/ffi' },
 		],
 	},

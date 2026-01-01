@@ -45,15 +45,18 @@ cd gene</code>
 			Gene ships as a Nim project. Use the bundled <code>nimble</code> tasks to build the bytecode VM and tooling.
 		</p>
 		<pre aria-label="Build the Gene executable">
-<code class="language-bash">cd gene
-nimble build</code>
+<code class="language-bash"># Standard build
+nimble build
+
+# Optimized build (native flags, release mode)
+nimble speedy</code>
 		</pre>
 		<p>
-			The compiled binary is placed in <code>gene/bin/gene</code>. You can also build directly with Nim for faster
+			The compiled binary is placed in <code>bin/gene</code>. You can also build directly with Nim for faster
 			iterative development:
 		</p>
 		<pre aria-label="Alternative Nim build command">
-<code class="language-bash">nim c -o:gene src/gene.nim</code>
+<code class="language-bash">nim c -o:bin/gene src/gene.nim</code>
 		</pre>
 	</section>
 
@@ -61,12 +64,21 @@ nimble build</code>
 		<h2>4. Verify your installation</h2>
 		<p>Run the CLI to confirm everything is wired up:</p>
 		<pre aria-label="Verify the Gene CLI">
-<code class="language-bash">./bin/gene --help
+<code class="language-bash">./bin/gene help
 ./bin/gene eval '(+ 1 2 3)'</code>
 		</pre>
 		<p>
-			You can also try the interactive REPL: <code>./bin/gene repl</code>. The REPL provides a fast feedback loop for
-			exploring APIs and macros.
+			Gene provides five main commands:
+		</p>
+		<ul>
+			<li><code>run <file></code> — parse, compile (with GIR caching), and execute a <code>.gene</code> program</li>
+			<li><code>eval <code></code> — evaluate inline Gene code or read from stdin</li>
+			<li><code>repl</code> — interactive REPL with multi-line input</li>
+			<li><code>parse <file | code></code> — parse source and print the AST</li>
+			<li><code>compile</code> — compile to bytecode or GIR format</li>
+		</ul>
+		<p>
+			Compiled IR is cached in the <code>build/</code> directory for faster subsequent runs. Use <code>--no-gir-cache</code> to skip caching.
 		</p>
 	</section>
 

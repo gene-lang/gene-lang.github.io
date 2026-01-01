@@ -3,45 +3,35 @@ import Layout from '../../layouts/Layout.astro';
 
 const examples = [
 	{
-		title: 'Loop-friendly accumulation',
-		description: 'Use familiar loops and assignment to process data step by step.',
-		code: `(fn sum [values]
-  (var total 0)
-  (for value in values
-    (total = (+ total value)))
-  total)
-
-(var data [1 2 3 4 5])
-(println "Total:" (sum data))`,
+		title: 'Hello World',
+		description: 'The simplest Gene program — print a greeting to the console.',
+		code: `# Hello World
+(print "Hello, World!")`,
 	},
 	{
-		title: 'Lightweight objects',
-		description: 'Define small classes with methods and stateful properties.',
-		code: `(class Counter
-  (.ctor []
-    (/value = 0))
+		title: 'Fibonacci',
+		description: 'Classic recursive function to compute Fibonacci numbers.',
+		code: `(fn fib [n]
+  (if (n < 2)
+    n
+  else
+    ((fib (n - 1)) + (fib (n - 2)))))
 
-  (.fn inc []
-    (/value = (+ /value 1))
-    /value))
-
-(var counter (new Counter))
-(counter .inc)
-(println "Counter value:" (counter .inc))`,
+(print "fib(10) =" (fib 10))`,
 	},
 	{
-		title: 'Async counters',
-		description: 'Compose asynchronous work with futures and await.',
-		code: `(fn count_async [max]
-  (async
-    (do
-      (var count 0)
-      (while (< count max)
-        (count = (+ count 1)))
-      count)))
+		title: 'Class with Constructor',
+		description: 'Define a class with properties, constructor, and methods using Gene OOP syntax.',
+		code: `(class Person < Object
+  (.ctor [name age]
+    (/name = name)
+    (/age = age))
 
-(var result (await (count_async 3)))
-(println "Finished at:" result)`,
+  (.fn greet []
+    (print "Hello, I'm" /name)))
+
+(var alice (new Person "Alice" 30))
+(alice .greet)`,
 	},
 ];
 ---

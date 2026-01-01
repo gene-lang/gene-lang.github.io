@@ -3,18 +3,19 @@ import Layout from '../layouts/Layout.astro';
 
 const featureHighlights = [
 	{
-		title: 'Expressive Lisp Core',
+		title: 'The Gene Data Structure',
 		description:
-			'Build complex systems with lightweight macros, first-class functions, and intuitive metaprogramming.',
+			'A unique tagged S-expression with type, properties, and children — the heart of Gene that enables homoiconicity and powerful DSLs.',
 	},
 	{
-		title: 'Optimized Bytecode VM',
-		description: 'Ship high-performance applications powered by a Nim-based virtual machine tuned for speed.',
+		title: 'High-Performance VM',
+		description:
+			'Achieve ~7.5M function calls/sec with a Nim-based bytecode VM featuring NaN-boxed 8-byte values and computed-goto dispatch.',
 	},
 	{
-		title: 'Pragmatic Concurrency',
+		title: 'Expressive Macro System',
 		description:
-			'Compose asynchronous workflows with a predictable async/await model and deterministic futures.',
+			'Transform code at compile-time with unevaluated arguments, template rendering, and full AST access.',
 	},
 ];
 
@@ -54,10 +55,10 @@ const ecosystem = [
 		<div class="hero-spotlight">
 			<h2>Why Gene?</h2>
 			<ul>
-				<li>Homoiconic language with a powerful macro system</li>
-				<li>Optimized Nim runtime and bytecode compiler</li>
-				<li>Interop-friendly design for native extensions</li>
-				<li>Composable async and pattern matching support</li>
+				<li>Homoiconic — code is data, data is code</li>
+				<li>CLI toolchain: run, eval, repl, parse, compile</li>
+				<li>Class system with constructors and methods</li>
+				<li>Async/await with futures, File I/O via io namespace</li>
 			</ul>
 		</div>
 	</section>
@@ -81,15 +82,23 @@ const ecosystem = [
 			in-browser execution required.
 		</p>
 		<pre aria-label="Gene code example">
-<code class="language-gene"># Summing with a simple loop
-(fn sum [values]
-  (var total 0)
-  (for value in values
-    (total = (+ total value)))
-  total)
+<code class="language-gene"># Fibonacci — a classic recursive example
+(fn fib [n]
+  (if (n < 2)
+    n
+  else
+    ((fib (n - 1)) + (fib (n - 2)))))
 
-(var data [1 2 3 4 5])
-(println "Total:" (sum data))</code>
+(print "fib(10) =" (fib 10))
+
+# Define a class with constructor and method
+(class Person < Object
+  (.ctor [name age]
+    (/name = name)
+    (/age = age))
+
+  (.fn greet []
+    (print "Hello, I'm" /name)))</code>
 		</pre>
 	</section>
 
