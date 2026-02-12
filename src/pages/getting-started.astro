@@ -96,15 +96,64 @@ nimble speedy</code>
 	</section>
 
 	<section class="step">
+		<h2>6. Explore Gene's unique features</h2>
+		<p>Gene's power comes from its unified data structure. Try these examples to see it in action:</p>
+
+		<h3>The Gene Data Structure</h3>
+		<pre aria-label="Gene data structure example">
+<code class="language-gene"># data.gene - Gene combines type, properties, and children
+(User ^id 123 ^active true "Alice" "alice@example.com" 30)
+
+# This represents a User with:
+# - Type: User
+# - Properties: id=123, active=true
+# - Children: "Alice", "alice@example.com", 30</code>
+		</pre>
+
+		<h3>Functions and Control Flow</h3>
+		<pre aria-label="Gene functions example">
+<code class="language-gene"># functions.gene - Define and use functions
+(fn greet [name]
+  ^description "Greets a person by name"
+  (str "Hello, " name "!"))
+
+(fn factorial [n]
+  (if (< n 2)
+    1
+    (* n (factorial (- n 1)))))
+
+(print (greet "World"))
+(print "5! =" (factorial 5))</code>
+		</pre>
+
+		<h3>Async Programming</h3>
+		<pre aria-label="Gene async example">
+<code class="language-gene"># async.gene - Real async/await support
+(async fn delay [ms]
+  (await (sleep ms))
+  (print "Waited" ms "milliseconds"))
+
+(async fn main []
+  (print "Starting...")
+  (await (delay 1000))
+  (print "Done!"))
+
+(main)</code>
+		</pre>
+	</section>
+
+	<section class="step">
 		<h2>Where to go next</h2>
 		<ul class="next-steps">
 			<li>
-				Read the <a href="/docs">documentation</a> for macros, pattern matching, async, and the object system.
+				Read the <a href="/docs">documentation</a> for macros, classes, and advanced async patterns.
 			</li>
-			<li>Browse the <a href="/examples">examples gallery</a> for idiomatic patterns and snippets.</li>
+			<li>Browse the <a href="/examples">examples gallery</a> for idiomatic patterns and AI-friendly code structures.</li>
 			<li>
-				Check <code>gene/docs/</code> in the repository for additional design documents that are being ported to the
-				website.
+				Experiment with Gene's homoiconic design — try generating code programmatically using the same data structures.
+			</li>
+			<li>
+				Check <code>gene/docs/</code> in the repository for additional architecture and design documents.
 			</li>
 		</ul>
 	</section>
@@ -162,6 +211,13 @@ nimble speedy</code>
 	.step h2 {
 		margin-bottom: 0.75rem;
 		font-size: 1.6rem;
+	}
+
+	.step h3 {
+		margin-top: 1.5rem;
+		margin-bottom: 0.5rem;
+		font-size: 1.2rem;
+		color: var(--color-accent);
 	}
 
 	.step p {

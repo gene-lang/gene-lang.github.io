@@ -3,35 +3,116 @@ import Layout from '../../layouts/Layout.astro';
 
 const examples = [
 	{
-		title: 'Hello World',
-		description: 'The simplest Gene program — print a greeting to the console.',
-		code: `# Hello World
-(print "Hello, World!")`,
+		title: 'Gene Data Structure',
+		description: 'The unique Gene data structure combines type, properties, and children in one unified format.',
+		code: `# Gene's unified data structure: (type ^prop value child1 child2)
+(User ^id 123 ^active true "Alice" "alice@example.com" 30)
+
+# Properties are key-value pairs
+(Config ^env "production" ^debug false "database" "cache")
+
+# Type can be complex
+((fn add [a b] (+ a b)) ^description "Addition function" 1 2)`,
 	},
 	{
-		title: 'Fibonacci',
-		description: 'Classic recursive function to compute Fibonacci numbers.',
-		code: `(fn fib [n]
-  (if (n < 2)
-    n
-  else
-    ((fib (n - 1)) + (fib (n - 2)))))
+		title: 'Code as Data (Homoiconic)',
+		description: 'Code and data share the same structure, enabling powerful metaprogramming.',
+		code: `# This is data
+(Person ^name "Alice" ^age 30)
 
-(print "fib(10) =" (fib 10))`,
+# This is code (same structure!)
+(fn greet [person]
+  ^description "Greet a person"
+  (print "Hello," (person ^name)))
+
+# Manipulate code as data
+(var code '(+ 1 2 3))
+(print "First element:" (first code))  # → +
+(print "Arguments:" (rest code))       # → (1 2 3)
+(eval code)                           # → 6`,
 	},
 	{
-		title: 'Class with Constructor',
-		description: 'Define a class with properties, constructor, and methods using Gene OOP syntax.',
-		code: `(class Person < Object
-  (.ctor [name age]
-    (/name = name)
-    (/age = age))
+		title: 'AI-Friendly Code Generation',
+		description: 'Generate code programmatically using the same data structures.',
+		code: `# Generate getter functions for fields
+(fn make-getter [field]
+  ^generated-by "code-generator"
+  (list 'fn (symbol (str "get-" field)) '[obj]
+    (list 'get 'obj (keyword field))))
 
-  (.fn greet []
-    (print "Hello, I'm" /name)))
+# Generate multiple getters
+(var user-getters
+  (map make-getter ["name" "email" "age"]))
 
-(var alice (new Person "Alice" 30))
-(alice .greet)`,
+# AI can easily generate this pattern:
+(fn process-users [users]
+  ^ai-generated true
+  ^confidence 0.95
+  (map (fn [user]
+         (if (user ^active)
+           (send-welcome user)
+           (archive-user user)))
+       users))`,
+	},
+	{
+		title: 'Macro System',
+		description: 'Transform code at compile-time using macros that work with the same data structures.',
+		code: `# Define a logging macro
+(macro with-logging [name & body]
+  \`(do
+     (print "Starting" ',name)
+     (var result (do ,@body))
+     (print "Finished" ',name "with result:" result)
+     result))
+
+# Use the macro
+(with-logging "calculation"
+  (var x 10)
+  (var y 20)
+  (+ x y))
+
+# The macro expands to regular Gene code automatically`,
+	},
+	{
+		title: 'Async/Await Programming',
+		description: 'Real async support with event loop integration for concurrent programming.',
+		code: `# Async function definition
+(async fn fetch-user [id]
+  ^description "Fetch user data asynchronously"
+  (var response (await (http/get (str "/api/users/" id))))
+  (json/parse response))
+
+# Compose async operations
+(async fn process-users [ids]
+  (var users (await (map-async fetch-user ids)))
+  (filter (fn [user] (user ^active)) users))
+
+# Real concurrency
+(async fn main []
+  (var [user1 user2] (await (parallel
+                              (fetch-user 1)
+                              (fetch-user 2))))
+  (print "Got users:" user1 user2))`,
+	},
+	{
+		title: 'Domain-Specific Languages',
+		description: 'Gene\'s uniform structure makes it easy to create embedded DSLs.',
+		code: `# HTML-like DSL using Gene data structures
+(html ^lang "en"
+  (head
+    (title "My Gene App"))
+  (body ^class "container"
+    (h1 ^id "welcome" "Welcome to Gene")
+    (p "This is generated from Gene data structures!")
+    (div ^class "content"
+      (button ^onclick "alert('Hello!')" "Click me"))))
+
+# Configuration DSL
+(server ^port 8080 ^host "localhost"
+  (database ^type "postgres" ^pool-size 10
+    "host=localhost" "user=gene" "password=secret")
+  (cache ^type "redis" ^ttl 3600
+    "localhost:6379"))`,
 	},
 ];
 ---
@@ -43,8 +124,7 @@ const examples = [
 	<header class="page-header">
 		<h1>Examples</h1>
 		<p>
-			Browse a curated gallery of Gene programs. Each snippet highlights a language feature, pairing the code with a
-			short explanation. Run them locally with the Gene CLI to experiment on your own machine.
+			Explore Gene's AI-friendly design through practical examples. Each snippet showcases how Gene's homoiconic structure makes it ideal for code generation, transformation, and AI reasoning. The uniform syntax pattern makes it predictable for both humans and AI systems.
 		</p>
 	</header>
 
@@ -61,10 +141,11 @@ const examples = [
 	</section>
 
 	<section class="note">
-		<strong>No in-browser execution.</strong>
+		<strong>AI-First Design Benefits</strong>
 		<span>
-			For safety, Gene snippets are rendered statically. Copy a snippet into a <code>.gene</code> file and run it
-			with <code>./bin/gene run</code> to explore the output.
+			Notice how every Gene construct follows the same pattern: <code>(type ^properties children)</code>.
+			This consistency makes Gene perfect for AI code generation and reasoning. Try copying a snippet
+			into a <code>.gene</code> file and run it with <code>./bin/gene run</code> to see it in action.
 		</span>
 	</section>
 </Layout>
