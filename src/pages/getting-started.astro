@@ -104,41 +104,46 @@ nimble speedy</code>
 <code class="language-gene"># data.gene - Gene combines type, properties, and children
 (User ^id 123 ^active true "Alice" "alice@example.com" 30)
 
-# This represents a User with:
-# - Type: User
-# - Properties: id=123, active=true
-# - Children: "Alice", "alice@example.com", 30</code>
+# Access properties and children with /
+(var user (User ^id 123 ^name "Alice"))
+(println user/id)      # => 123
+(println user/name)    # => Alice</code>
 		</pre>
 
 		<h3>Functions and Control Flow</h3>
 		<pre aria-label="Gene functions example">
 <code class="language-gene"># functions.gene - Define and use functions
-(fn greet [name]
+(fn greet [name: String] -> String
   ^description "Greets a person by name"
-  (str "Hello, " name "!"))
+  ^intent "Create friendly greeting"
+  ("Hello, " .append name .append "!")
+)
 
-(fn factorial [n]
-  (if (< n 2)
+(fn factorial [n: Int] -> Int
+  (if (n <= 1)
     1
-    (* n (factorial (- n 1)))))
+  else
+    (n * (factorial (n - 1)))
+  )
+)
 
-(print (greet "World"))
-(print "5! =" (factorial 5))</code>
+(println (greet "World"))
+(println "5! =" (factorial 5))</code>
 		</pre>
 
-		<h3>Async Programming</h3>
-		<pre aria-label="Gene async example">
-<code class="language-gene"># async.gene - Real async/await support
-(async fn delay [ms]
-  (await (sleep ms))
-  (print "Waited" ms "milliseconds"))
+		<h3>Collection Methods</h3>
+		<pre aria-label="Gene collection methods example">
+<code class="language-gene"># Collections with .map, .filter, .reduce
+(var numbers [1 2 3 4 5])
 
-(async fn main []
-  (print "Starting...")
-  (await (delay 1000))
-  (print "Done!"))
+# Double each number
+(var doubled (numbers .map (fn [x: Int] -> Int (x * 2))))
 
-(main)</code>
+# Filter even numbers
+(var evens (numbers .filter (fn [x: Int] -> Bool ((x % 2) == 0))))
+
+# Sum all numbers
+(var sum (numbers .reduce 0 (fn [acc: Int x: Int] -> Int (acc + x))))</code>
 		</pre>
 	</section>
 

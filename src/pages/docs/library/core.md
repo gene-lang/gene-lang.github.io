@@ -9,15 +9,15 @@ Gene's standard library provides essential functions for working with data struc
 Gene supports integers and floating-point numbers with automatic conversion:
 
 ```gene
-# Integer arithmetic
-(+ 1 2 3)          ; → 6
-(* 4 5)            ; → 20
-(/ 10 3)           ; → 3.333...
+# Integer arithmetic with standard operators
+(println (1 + 2 + 3))      # => 6
+(println (4 * 5))          # => 20
+(println (10 / 3))         # => 3.333...
+(println (2 + 3 * 4))      # => 14 (operator precedence)
 
-# Type checking
-(int? 42)          ; → true
-(float? 3.14)      ; → true
-(number? "hello")  ; → false
+# Type checking (built-in predicates)
+(println (42 .is_int))     # => true
+(println (3.14 .is_float)) # => true
 ```
 
 ### Strings
@@ -25,44 +25,44 @@ Gene supports integers and floating-point numbers with automatic conversion:
 String manipulation and formatting:
 
 ```gene
-# Basic operations
-(str "Hello" " " "World")     ; → "Hello World"
-(length "Gene")               ; → 4
-(substring "Programming" 0 4) ; → "Prog"
-
-# String predicates
-(string? "hello")             ; → true
-(empty? "")                   ; → true
-(starts-with? "Gene" "G")     ; → true
+# String operations with method calls
+(var s "Hello, Gene!")
+(println s/.length)           # => 12
+(println s/.to_upper)         # => "HELLO, GENE!"
+(println ("42" .to_i))        # => 42 (string to integer)
+(println ("hello" .append " world"))  # => "hello world"
 ```
 
 ### Collections
 
-#### Lists
+#### Arrays
 ```gene
-# Creation and access
-(list 1 2 3 4)        ; → [1 2 3 4]
-(first [1 2 3])       ; → 1
-(rest [1 2 3])        ; → [2 3]
-(nth [1 2 3] 1)       ; → 2
+# Creation and access with / operator
+(var arr [1 2 3 4 5])
+(println "Array:" arr)
+(println "First:" arr/0)      # => 1
+(println "Last:" arr/4)       # => 5
 
-# Manipulation
-(cons 0 [1 2 3])      ; → [0 1 2 3]
-(append [1 2] [3 4])  ; → [1 2 3 4]
-(reverse [1 2 3])     ; → [3 2 1]
+# Array modification
+(arr/0 = 10)
+(println "Modified:" arr/0)   # => 10
+
+# Collection methods
+(var doubled (arr .map (fn [x: Int] -> Int (x * 2))))
+(var evens (arr .filter (fn [x: Int] -> Bool ((x % 2) == 0))))
 ```
 
 #### Maps
 ```gene
-# Creation and access
-(map :name "Alice" :age 30)  ; → {:name "Alice" :age 30}
-(get my-map :name)           ; → "Alice"
-(keys my-map)                ; → [:name :age]
-(values my-map)              ; → ["Alice" 30]
+# Creation and access with / operator
+(var m {^name "Alice" ^age 30 ^city "NYC"})
+(println "Name:" m/name)      # => Alice
+(println "Age:" m/age)        # => 30
 
-# Manipulation
-(assoc my-map :city "NYC")   ; Add key-value pair
-(dissoc my-map :age)         ; Remove key
+# Map modification
+(m/age = 31)
+(m/email = "alice@example.com")
+(println "Updated:" m)
 ```
 
 ## Control Flow
@@ -70,41 +70,49 @@ String manipulation and formatting:
 ### Conditionals
 
 ```gene
-# Basic if-else
-(if (> x 0)
-  "positive"
-  "non-positive")
+# Basic if-else with standard operators
+(if (x > 0)
+  (println "positive")
+else
+  (println "non-positive")
+)
 
-# Multiple conditions
-(cond
-  (< x 0) "negative"
-  (> x 0) "positive"
-  :else   "zero")
+# Multiple conditions with elif
+(if (x < 0)
+  (println "negative")
+elif (x > 0)
+  (println "positive")
+else
+  (println "zero")
+)
 
 # Boolean operations
-(and true false)      ; → false
-(or true false)       ; → true
-(not false)           ; → true
+(println (true && false))     # => false
+(println (true || false))     # => true
 ```
 
 ### Loops
 
 ```gene
-# While loop
-(var i 0)
-(while (< i 5)
-  (print i)
-  (set i (+ i 1)))
+# Loop with break
+(var count 0)
+(loop
+  (count += 1)
+  (if (count >= 5)
+    (break)
+  )
+)
 
 # For each
-(each item [1 2 3 4]
-  (print "Item:" item))
+(for item in [1 2 3 4]
+  (println "Item:" item)
+)
 
-# Map over collection
-(map (fn [x] (* x 2)) [1 2 3 4])  ; → [2 4 6 8]
-
-# Filter collection
-(filter odd? [1 2 3 4 5])          ; → [1 3 5]
+# Collection methods
+(var numbers [1 2 3 4 5])
+(var doubled (numbers .map (fn [x: Int] -> Int (x * 2))))
+(var evens (numbers .filter (fn [x: Int] -> Bool ((x % 2) == 0))))
+(var sum (numbers .reduce 0 (fn [acc: Int x: Int] -> Int (acc + x))))
 ```
 
 ## Functions
@@ -112,38 +120,47 @@ String manipulation and formatting:
 ### Definition and Calls
 
 ```gene
-# Simple function
-(fn add [a b]
-  (+ a b))
+# Simple function with types
+(fn add [a: Int b: Int] -> Int
+  (a + b)
+)
 
 # Function with metadata
-(fn factorial [n]
+(fn factorial [n: Int] -> Int
   ^description "Computes factorial recursively"
   ^complexity "O(n)"
-  (if (< n 2)
+  ^intent "Calculate n!"
+  ^examples [{^input 5 ^output 120}]
+  (if (n <= 1)
     1
-    (* n (factorial (- n 1)))))
+  else
+    (n * (factorial (n - 1)))
+  )
+)
 
 # Anonymous functions
-(fn [x] (* x x))              ; Square function
-((fn [x] (* x x)) 5)          ; → 25
+(var square (fn [x: Int] -> Int (x * x)))
+(println (square 5))          # => 25
 ```
 
 ### Higher-Order Functions
 
 ```gene
 # Function that returns a function
-(fn make-adder [n]
-  (fn [x] (+ x n)))
+(fn make-adder [n: Int] -> Any
+  (fn [x: Int] -> Int (x + n))
+)
 
 (var add5 (make-adder 5))
-(add5 10)                     ; → 15
+(println (add5 10))           # => 15
 
 # Function that takes functions
-(fn apply-twice [f x]
-  (f (f x)))
+(fn apply-twice [f: Any x: Int] -> Int
+  (f (f x))
+)
 
-(apply-twice (fn [x] (* x 2)) 3)  ; → 12
+(var result (apply-twice (fn [x: Int] -> Int (x * 2)) 3))
+(println result)              # => 12
 ```
 
 ## I/O Operations

@@ -22,18 +22,26 @@ Unlike traditional S-expressions or JSON, Gene combines three structural element
 
 **Data:**
 ```gene
-(Person ^name "Alice" ^age 30 ^active true)
-(Config ^env "production" ^debug false "database" "cache" "api")
+(var person `(Person ^name "Alice" ^age 30 ^active true))
+(var config `(Config ^env "production" ^debug false "database" "cache" "api"))
+
+# Access with / operator
+(println person/name)  # => Alice
+(println person/age)   # => 30
 ```
 
 **Code:**
 ```gene
-(fn factorial [n]
+(fn factorial [n: Int] -> Int
   ^description "Computes factorial recursively"
   ^complexity "O(n)"
-  (if (< n 2)
+  ^intent "Calculate n!"
+  (if (n <= 1)
     1
-    (* n (factorial (- n 1)))))
+  else
+    (n * (factorial (n - 1)))
+  )
+)
 ```
 
 ## Key Principles
@@ -47,15 +55,19 @@ Code and data share the same representation. This means:
 - **AI-friendly**: Uniform syntax makes it easy for AI to generate and reason about code
 
 ```gene
-# This is data
-(Person ^name "Alice" ^age 30)
+# This is data (use backtick to quote)
+(var person `(Person ^name "Alice" ^age 30))
 
 # This is code (same structure!)
-(class Person < Object
-  ^final true
-  (ctor [name age]
+(class Person
+  (ctor [name: String age: Int]
     (/name = name)
-    (/age = age)))
+    (/age = age)
+  )
+  (method greet _
+    (println "Hello, I'm" /name)
+  )
+)
 ```
 
 ### 2. Self-Describing Data
@@ -64,10 +76,12 @@ Every Gene structure includes its type information, making data self-documenting
 
 ```gene
 # Traditional approach (ambiguous)
-["Alice", 30, true]
+["Alice" 30 true]
 
 # Gene approach (self-describing)
-(Person ^name "Alice" ^age 30 ^active true)
+(var person `(Person ^name "Alice" ^age 30 ^active true))
+(println person/name)   # Access properties with /
+(println person/age)
 ```
 
 ### 3. Flexible DSLs
@@ -75,18 +89,18 @@ Every Gene structure includes its type information, making data self-documenting
 The unified structure enables natural domain-specific languages:
 
 ```gene
-# HTML-like DSL
-(html ^lang "en"
+# HTML-like DSL using Gene structures
+(var page `(html ^lang "en"
   (head
     (title "My Page"))
   (body ^class "container"
     (h1 "Welcome")
-    (p "Hello, world!")))
+    (p "Hello, world!"))))
 
 # Configuration DSL
-(server ^port 8080 ^host "localhost"
+(var config `(server ^port 8080 ^host "localhost"
   (database ^type "postgres" ^url "localhost:5432")
-  (cache ^type "redis" ^ttl 3600))
+  (cache ^type "redis" ^ttl 3600)))
 ```
 
 ### 4. AI-First Design Benefits
@@ -96,28 +110,41 @@ Gene's homoiconic design provides unique advantages for AI development:
 #### Easy Code Generation
 ```gene
 # AI can easily generate this pattern
-(fn process-user [user]
+(fn process-user [user: Any]
   ^generated-by "AI"
   ^confidence 0.95
-  (if (user ^active)
+  ^intent "Process user based on active status"
+  (if user/active
     (send-welcome user)
-    (archive-user user)))
+  else
+    (archive-user user)
+  )
+)
 ```
 
 #### Consistent Structure
 Every Gene construct follows the same pattern, making it predictable for AI systems:
 
 ```gene
-# Function definition
-(fn name [args] body)
+# Function definition with types
+(fn name [arg: Type] -> ReturnType body)
 
-# Class definition
-(class name < parent body)
+# Class definition with inheritance
+(class Name < Parent
+  (ctor [args] body)
+  (method name [args] body)
+)
 
-# Conditional
-(if condition then else)
+# Conditional with elif
+(if condition
+  then-body
+elif another-condition
+  elif-body
+else
+  else-body
+)
 
-# Data
+# Data structure
 (Type ^prop value children)
 ```
 

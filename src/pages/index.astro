@@ -87,17 +87,21 @@ const ecosystem = [
 (Person ^name "Alice" ^age 30 "Engineer" "Loves coding")
 
 # Code uses the same structure - homoiconic design!
-(fn factorial [n]
+(fn factorial [n: Int] -> Int
   ^description "Classic recursive factorial"
   ^complexity "O(n)"
-  (if (< n 2)
+  ^intent "Compute factorial of n"
+  (if (n <= 1)
     1
-    (* n (factorial (- n 1)))))
+  else
+    (n * (factorial (n - 1)))
+  )
+)
 
-# Async/await with real event loop integration
-(async fn fetch-user [id]
-  (var response (await (http/get (str "/api/users/" id))))
-  (json/parse response))</code>
+# Collection methods with standard operators
+(var nums [1 2 3 4 5])
+(var doubled (nums .map (fn [x: Int] -> Int (x * 2))))
+(var evens (nums .filter (fn [x: Int] -> Bool ((x % 2) == 0))))</code>
 		</pre>
 	</section>
 

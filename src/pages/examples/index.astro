@@ -6,113 +6,123 @@ const examples = [
 		title: 'Gene Data Structure',
 		description: 'The unique Gene data structure combines type, properties, and children in one unified format.',
 		code: `# Gene's unified data structure: (type ^prop value child1 child2)
-(User ^id 123 ^active true "Alice" "alice@example.com" 30)
+(var user (User ^id 123 ^active true "Alice" "alice@example.com"))
 
-# Properties are key-value pairs
-(Config ^env "production" ^debug false "database" "cache")
+# Access with / operator
+(println user/id)       # => 123
+(println user/active)   # => true
 
-# Type can be complex
-((fn add [a b] (+ a b)) ^description "Addition function" 1 2)`,
+# Properties are key-value pairs, children are positional
+(var config (Config ^env "production" ^debug false "database" "cache"))`,
 	},
 	{
 		title: 'Code as Data (Homoiconic)',
 		description: 'Code and data share the same structure, enabling powerful metaprogramming.',
-		code: `# This is data
-(Person ^name "Alice" ^age 30)
+		code: `# This is data - use backtick to quote
+(var person \\\`(Person ^name "Alice" ^age 30))
 
 # This is code (same structure!)
-(fn greet [person]
+(fn greet [person: Any]
   ^description "Greet a person"
-  (print "Hello," (person ^name)))
+  (println "Hello," person/name)
+)
 
 # Manipulate code as data
-(var code '(+ 1 2 3))
-(print "First element:" (first code))  # → +
-(print "Arguments:" (rest code))       # → (1 2 3)
-(eval code)                           # → 6`,
+(var expr \\\`(if (x > 0) "positive" else "negative"))
+(println "Expression type:" expr/.type)     # => if
+(println "First child:" expr/.children/0)   # => (x > 0)`,
 	},
 	{
-		title: 'AI-Friendly Code Generation',
-		description: 'Generate code programmatically using the same data structures.',
-		code: `# Generate getter functions for fields
-(fn make-getter [field]
-  ^generated-by "code-generator"
-  (list 'fn (symbol (str "get-" field)) '[obj]
-    (list 'get 'obj (keyword field))))
+		title: 'Collection Methods',
+		description: 'Built-in collection methods make data processing elegant and functional.',
+		code: `# Array methods: .map, .filter, .reduce
+(var numbers [1 2 3 4 5])
 
-# Generate multiple getters
-(var user-getters
-  (map make-getter ["name" "email" "age"]))
+# Transform each element
+(var doubled (numbers .map (fn [x: Int] -> Int (x * 2))))
+# => [2 4 6 8 10]
 
-# AI can easily generate this pattern:
-(fn process-users [users]
-  ^ai-generated true
-  ^confidence 0.95
-  (map (fn [user]
-         (if (user ^active)
-           (send-welcome user)
-           (archive-user user)))
-       users))`,
+# Filter by condition
+(var evens (numbers .filter (fn [x: Int] -> Bool ((x % 2) == 0))))
+# => [2 4]
+
+# Reduce to single value
+(var sum (numbers .reduce 0 (fn [acc: Int x: Int] -> Int (acc + x))))
+# => 15
+
+# Chain methods together
+(var result (numbers .filter (fn [x: Int] -> Bool (x > 2))
+                     .map (fn [x: Int] -> Int (x * 3))))`,
 	},
 	{
-		title: 'Macro System',
-		description: 'Transform code at compile-time using macros that work with the same data structures.',
-		code: `# Define a logging macro
-(macro with-logging [name & body]
-  \`(do
-     (print "Starting" ',name)
-     (var result (do ,@body))
-     (print "Finished" ',name "with result:" result)
-     result))
+		title: 'Functions with Metadata',
+		description: 'Functions can include metadata like ^intent and ^examples for documentation.',
+		code: `# Function with intent and examples metadata
+(fn factorial [n: Int] -> Int
+  ^description "Computes factorial recursively"
+  ^intent "Calculate n! = n * (n-1) * ... * 1"
+  ^examples [
+    {^input 5 ^output 120}
+    {^input 0 ^output 1}
+  ]
+  (if (n <= 1)
+    1
+  else
+    (n * (factorial (n - 1)))
+  )
+)
 
-# Use the macro
-(with-logging "calculation"
-  (var x 10)
-  (var y 20)
-  (+ x y))
-
-# The macro expands to regular Gene code automatically`,
+# Run examples with: gene run-examples factorial.gene
+# This validates the function against its ^examples`,
 	},
 	{
-		title: 'Async/Await Programming',
-		description: 'Real async support with event loop integration for concurrent programming.',
-		code: `# Async function definition
-(async fn fetch-user [id]
-  ^description "Fetch user data asynchronously"
-  (var response (await (http/get (str "/api/users/" id))))
-  (json/parse response))
+		title: 'Class Inheritance & OOP',
+		description: 'Object-oriented programming with classes, inheritance, and methods.',
+		code: `# Base class
+(class Animal
+  (ctor [name: String]
+    (/name = name)
+  )
+  (method speak _
+    (println /name "makes a sound")
+  )
+)
 
-# Compose async operations
-(async fn process-users [ids]
-  (var users (await (map-async fetch-user ids)))
-  (filter (fn [user] (user ^active)) users))
+# Derived class with inheritance
+(class Dog < Animal
+  (ctor [name: String breed: String]
+    (super [name])     # Call parent constructor
+    (/breed = breed)
+  )
+  (method speak _
+    (println /name "barks! Breed:" /breed)
+  )
+)
 
-# Real concurrency
-(async fn main []
-  (var [user1 user2] (await (parallel
-                              (fetch-user 1)
-                              (fetch-user 2))))
-  (print "Got users:" user1 user2))`,
+(var dog (new Dog "Max" "Golden Retriever"))
+(dog .speak)  # => Max barks! Breed: Golden Retriever`,
 	},
 	{
-		title: 'Domain-Specific Languages',
-		description: 'Gene\'s uniform structure makes it easy to create embedded DSLs.',
-		code: `# HTML-like DSL using Gene data structures
-(html ^lang "en"
-  (head
-    (title "My Gene App"))
-  (body ^class "container"
-    (h1 ^id "welcome" "Welcome to Gene")
-    (p "This is generated from Gene data structures!")
-    (div ^class "content"
-      (button ^onclick "alert('Hello!')" "Click me"))))
+		title: 'Dynamic Property Access',
+		description: 'Access object properties and array indices dynamically at runtime.',
+		code: `# Dynamic array access
+(var arr [10 20 30 40])
+(var index 2)
+(println arr/index)  # => 30 (same as arr/2)
 
-# Configuration DSL
-(server ^port 8080 ^host "localhost"
-  (database ^type "postgres" ^pool-size 10
-    "host=localhost" "user=gene" "password=secret")
-  (cache ^type "redis" ^ttl 3600
-    "localhost:6379"))`,
+# Dynamic map access
+(var person {^name "Alice" ^age 30 ^city "NYC"})
+(var key \\\`age)
+(println person/key)  # => 30
+
+# Nested dynamic access
+(var data {^users [{^name "Alice"} {^name "Bob"}]})
+(var i 0)
+(println data/users/i/name)  # => Alice
+
+# Use with collection methods
+(var fields [\\\`name \\\`age \\\`city])
+(fields .map (fn [field: Any] -> Any (person/field)))`,
 	},
 ];
 ---
