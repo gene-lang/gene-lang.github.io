@@ -43,16 +43,16 @@ const examples = [
 # => [2 4 6 8 10]
 
 # Filter by condition
-(var evens (numbers .filter (fn [x: Int] -> Bool ((x % 2) == 0))))
+(var big (numbers .filter (fn [x] (x > 2))))
 # => [2 4]
 
 # Reduce to single value
 (var sum (numbers .reduce 0 (fn [acc: Int x: Int] -> Int (acc + x))))
 # => 15
 
-# Chain methods together
-(var result (numbers .filter (fn [x: Int] -> Bool (x > 2))
-                     .map (fn [x: Int] -> Int (x * 3))))`,
+# Two-step pipeline
+(var filtered (numbers .filter (fn [x] (x > 2))))
+(var result (filtered .map (fn [x] (x * 3))))`,
 	},
 	{
 		title: 'Functions with Metadata',
@@ -91,7 +91,7 @@ const examples = [
 # Derived class with inheritance
 (class Dog < Animal
   (ctor [name: String breed: String]
-    (super [name])     # Call parent constructor
+    (super .ctor name)  # Call parent constructor
     (/breed = breed)
   )
   (method speak _

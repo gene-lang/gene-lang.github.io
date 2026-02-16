@@ -49,7 +49,7 @@ String manipulation and formatting:
 
 # Collection methods
 (var doubled (arr .map (fn [x: Int] -> Int (x * 2))))
-(var evens (arr .filter (fn [x: Int] -> Bool ((x % 2) == 0))))
+(var big (arr .filter (fn [x] (x > 2))))
 ```
 
 #### Maps
@@ -111,8 +111,8 @@ else
 # Collection methods
 (var numbers [1 2 3 4 5])
 (var doubled (numbers .map (fn [x: Int] -> Int (x * 2))))
-(var evens (numbers .filter (fn [x: Int] -> Bool ((x % 2) == 0))))
-(var sum (numbers .reduce 0 (fn [acc: Int x: Int] -> Int (acc + x))))
+(var big (numbers .filter (fn [x] (x > 2))))
+(var sum (numbers .reduce 0 (fn [acc x] (acc + x))))
 ```
 
 ## Functions

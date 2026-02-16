@@ -82,7 +82,7 @@ Gene now supports standard mathematical and logical operator precedence, making 
 (println (a == b || c == d)) # OR has lowest precedence
 
 # Operator precedence levels (highest to lowest):
-# 1. * / %        (multiplication, division, modulo)
+# 1. * /          (multiplication, division)
 # 2. + -          (addition, subtraction)
 # 3. < > <= >=    (comparison)
 # 4. == !=        (equality)
@@ -115,11 +115,11 @@ Arrays and maps now have built-in methods for functional programming:
 
 ```gene
 (var numbers [1 2 3 4 5 6])
-(var evens (numbers .filter (fn [x: Int] -> Bool ((x % 2) == 0))))
-# => [2 4 6]
-
-(var large (numbers .filter (fn [x: Int] -> Bool (x > 3))))
+(var large (numbers .filter (fn [x] (x > 3))))
 # => [4 5 6]
+
+(var small (numbers .filter (fn [x] (x <= 2))))
+# => [1 2]
 ```
 
 ### .reduce - Aggregate Values
@@ -220,7 +220,7 @@ Full support for class inheritance with method overriding:
 # Derived class
 (class Dog < Animal
   (ctor [name: String breed: String]
-    (super [name])     # Call parent constructor
+    (super .ctor name)  # Call parent constructor
     (/breed = breed)
   )
   (method speak _      # Override parent method
@@ -270,7 +270,7 @@ Full support for class inheritance with method overriding:
 
 (class Car < Vehicle
   (ctor [wheels: Int brand: String]
-    (super [wheels])    # Must call super first
+    (super .ctor wheels) # Must call super first
     (/brand = brand)
   )
 )

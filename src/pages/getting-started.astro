@@ -139,11 +139,11 @@ nimble speedy</code>
 # Double each number
 (var doubled (numbers .map (fn [x: Int] -> Int (x * 2))))
 
-# Filter even numbers
-(var evens (numbers .filter (fn [x: Int] -> Bool ((x % 2) == 0))))
+# Filter numbers greater than 2
+(var big (numbers .filter (fn [x] (x > 2))))
 
 # Sum all numbers
-(var sum (numbers .reduce 0 (fn [acc: Int x: Int] -> Int (acc + x))))</code>
+(var sum (numbers .reduce 0 (fn [acc x] (acc + x))))</code>
 		</pre>
 	</section>
 
