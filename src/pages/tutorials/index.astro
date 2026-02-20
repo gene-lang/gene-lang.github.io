@@ -35,10 +35,19 @@ import Layout from '../../layouts/Layout.astro';
 		</article>
 
 		<article class="tutorial-card">
-			<h2>Async orchestration and services</h2>
+			<h2>Async, generators, and structured concurrency</h2>
 			<p>
-				Compose futures, coordinate parallel tasks, and surface insights from asynchronous data sources with the Gene
-				async runtime.
+				Compose futures, coordinate parallel tasks with task_scope, and process lazy sequences with
+				generators. Covers async/await, fn*, yield, and shared-nothing threads with channels.
+			</p>
+			<span class="meta">Status: Planned &middot; Target audience: Intermediate to advanced</span>
+		</article>
+
+		<article class="tutorial-card">
+			<h2>Capability sandboxing and safe execution</h2>
+			<p>
+				Learn Gene's deny-by-default capability model: grant, scope, and revoke permissions for file
+				I/O, threads, and tool calling. Build a sandboxed script runner for AI agents.
 			</p>
 			<span class="meta">Status: Planned &middot; Target audience: Intermediate to advanced</span>
 		</article>
@@ -47,10 +56,10 @@ import Layout from '../../layouts/Layout.astro';
 	<section class="cta">
 		<h2>Want to contribute a tutorial?</h2>
 		<p>
-			We welcome community-authored walkthroughs. Share your idea through an OpenSpec proposal or open a GitHub issue
-			to coordinate.
+			We welcome community-authored walkthroughs. Share your idea by opening a GitHub issue to
+			coordinate.
 		</p>
-                <a class="button primary" href="https://github.com/gene-lang/gene/discussions" rel="noopener">Discuss a tutorial idea</a>
+                <a class="button primary" href="https://github.com/gcao/genex/discussions" rel="noopener">Discuss a tutorial idea</a>
 	</section>
 </Layout>
 

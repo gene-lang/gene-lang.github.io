@@ -1,0 +1,115 @@
+---
+interface Props {
+  code: string;
+  lang?: string;
+}
+const { code, lang = 'gene' } = Astro.props;
+---
+
+<div class="code-runner">
+  <div class="cr-wrapper">
+    <pre aria-label="Gene code example"><code class={`language-${lang}`}>{code}</code></pre>
+    <button class="gene-run-btn" type="button" aria-label="Run this code">&#9654; Run</button>
+  </div>
+  <div class="cr-output" hidden>
+    <div class="cr-output-bar">
+      <span>Output</span>
+      <button class="gene-clear-btn" type="button">&times; Clear</button>
+    </div>
+    <pre class="cr-output-pre"></pre>
+  </div>
+</div>
+
+<style>
+  .code-runner {
+    margin: 1.5rem 0;
+  }
+
+  .cr-wrapper {
+    position: relative;
+  }
+
+  /* Override the global pre margin so the run button lines up */
+  .cr-wrapper :global(pre) {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  .gene-run-btn {
+    position: absolute;
+    top: 0.6rem;
+    right: 0.6rem;
+    z-index: 2;
+    background: var(--color-accent);
+    color: #fff;
+    border: none;
+    border-radius: 0.45rem;
+    padding: 0.28rem 0.75rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    line-height: 1.5;
+    transition: background 0.15s ease, opacity 0.15s ease;
+  }
+
+  .gene-run-btn:hover {
+    background: var(--color-accent-strong);
+  }
+
+  .gene-run-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .cr-output {
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    overflow: hidden;
+    margin-top: 0.4rem;
+    background: var(--color-surface);
+  }
+
+  .cr-output-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.35rem 1rem;
+    border-bottom: 1px solid var(--color-border);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-muted);
+  }
+
+  .gene-clear-btn {
+    background: none;
+    border: none;
+    color: var(--color-muted);
+    cursor: pointer;
+    font-size: 0.78rem;
+    padding: 0;
+    line-height: 1;
+  }
+
+  .gene-clear-btn:hover {
+    color: var(--color-text);
+  }
+
+  .cr-output-pre {
+    margin: 0;
+    padding: 0.8rem 1.1rem;
+    font-size: 0.88rem;
+    color: #6ee7b7;
+    white-space: pre-wrap;
+    word-break: break-word;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    line-height: 1.55;
+  }
+
+  .cr-output-pre.error {
+    color: #fca5a5;
+  }
+</style>

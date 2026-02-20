@@ -1,19 +1,48 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import CodeRunner from '../components/CodeRunner.astro';
+
+const helloCode = `(println "Hello from Gene!")`;
+
+const featuresCode = `# Variables and string interpolation
+(var name "Gene")
+(println "Hello, #{name}!")
+
+# Functions with closures
+(fn make_adder [x]
+  (fn [y] (x + y)))
+(var add5 (make_adder 5))
+(println (add5 10))         # => 15
+
+# Collection methods
+(var nums [1 2 3 4 5])
+(println (nums .map (fn [x] (x * 2))))   # => [2 4 6 8 10]
+(println (nums .filter (fn [x] (x > 3)))) # => [4 5]`;
+
+const classCode = `(class Point
+  (ctor [x y]
+    (/x = x)
+    (/y = y))
+  (method to_s []
+    ("Point(" .append (str /x) ", " (str /y) ")")))
+
+(var p (new Point 3 4))
+(println p/.to_s)           # => Point(3, 4)
+(println (p is Point))      # => true`;
 ---
 
 <Layout
 	title="Getting Started with Gene"
-	description="Install the Gene toolchain, build the compiler, and run your first program in minutes."
+	description="Install the Gene toolchain, build the VM, and run your first program in minutes."
 >
 	<section class="hero">
 		<h1>Getting started</h1>
 		<p class="intro">
-			Follow the steps below to install the Gene runtime, compile from source, and run your first program. Gene
-			builds on Nim, so the same instructions work across macOS, Linux, and Windows.
+			Follow the steps below to install the Gene runtime, compile from source, and run your first
+			program. Gene builds on Nim, so the same instructions work across macOS and Linux.
 		</p>
 		<div class="quick-actions">
-                        <a class="button primary" href="https://github.com/gene-lang/gene" rel="noopener">View source on GitHub</a>
+			<a class="button primary" href="https://github.com/gcao/genex" rel="noopener">View source on GitHub</a>
 			<a class="button secondary" href="/docs">Explore documentation</a>
 		</div>
 	</section>
@@ -22,10 +51,10 @@ import Layout from '../layouts/Layout.astro';
 		<h2>1. Install prerequisites</h2>
 		<ul>
 			<li>
-				Install <a href="https://nim-lang.org/install.html" rel="noopener">Nim 1.6 or newer</a> with your preferred
-				package manager.
+				Install <a href="https://nim-lang.org/install.html" rel="noopener">Nim 2.0 or newer</a> — use
+				<code>choosenim</code> for easy version management.
 			</li>
-			<li>Ensure a C compiler is available (`clang`, `gcc`, or the MSVC toolchain on Windows).</li>
+			<li>Ensure a C compiler is available (<code>clang</code> or <code>gcc</code>).</li>
 			<li>Optional but recommended: install <code>git</code> to fetch updates.</li>
 		</ul>
 	</section>
@@ -33,30 +62,30 @@ import Layout from '../layouts/Layout.astro';
 	<section class="step">
 		<h2>2. Clone the repository</h2>
 		<pre aria-label="Clone the Gene repository">
-<code class="language-bash">git clone https://github.com/gene-lang/gene.git
-cd gene</code>
+<code class="language-bash">git clone https://github.com/gcao/genex.git
+cd genex</code>
 		</pre>
-		<p>If you are contributing, fork the repository first and add your fork as the origin remote.</p>
+		<p>If you are contributing, fork the repository first and add your fork as the <code>origin</code> remote.</p>
 	</section>
 
 	<section class="step">
-		<h2>3. Build the Gene compiler</h2>
+		<h2>3. Build the Gene runtime</h2>
 		<p>
-			Gene ships as a Nim project. Use the bundled <code>nimble</code> tasks to build the bytecode VM and tooling.
+			Gene ships as a Nim project. Use <code>nimble</code> to build the bytecode VM and CLI tooling.
 		</p>
 		<pre aria-label="Build the Gene executable">
-<code class="language-bash"># Standard build
+<code class="language-bash"># Debug build (faster to compile)
 nimble build
 
-# Optimized build (native flags, release mode)
-nimble speedy</code>
+# Release build (faster to run)
+nimble build -d:release</code>
 		</pre>
 		<p>
-			The compiled binary is placed in <code>bin/gene</code>. You can also build directly with Nim for faster
-			iterative development:
+			The compiled binary lands in <code>bin/gene</code>. You can also build the WASM module for
+			browser use:
 		</p>
-		<pre aria-label="Alternative Nim build command">
-<code class="language-bash">nim c -o:bin/gene src/gene.nim</code>
+		<pre aria-label="Build the WASM module">
+<code class="language-bash">nimble wasm   # produces web/gene_wasm.js + web/gene_wasm.wasm</code>
 		</pre>
 	</section>
 
@@ -65,100 +94,62 @@ nimble speedy</code>
 		<p>Run the CLI to confirm everything is wired up:</p>
 		<pre aria-label="Verify the Gene CLI">
 <code class="language-bash">./bin/gene help
-./bin/gene eval '(+ 1 2 3)'</code>
+./bin/gene eval '(println "Hello, Gene!")'</code>
 		</pre>
-		<p>
-			Gene provides five main commands:
-		</p>
+		<p>Gene provides these main commands:</p>
 		<ul>
-			<li><code>run <file></code> — parse, compile (with GIR caching), and execute a <code>.gene</code> program</li>
-			<li><code>eval <code></code> — evaluate inline Gene code or read from stdin</li>
-			<li><code>repl</code> — interactive REPL with multi-line input</li>
-			<li><code>parse <file | code></code> — parse source and print the AST</li>
-			<li><code>compile</code> — compile to bytecode or GIR format</li>
+			<li><code>run &lt;file&gt;</code> — compile and execute a <code>.gene</code> program</li>
+			<li><code>eval &lt;code&gt;</code> — evaluate an inline Gene expression</li>
+			<li><code>repl</code> — interactive REPL with breakpoint support</li>
+			<li><code>pipe</code> — read Gene code from stdin for Unix pipeline processing</li>
 		</ul>
-		<p>
-			Compiled IR is cached in the <code>build/</code> directory for faster subsequent runs. Use <code>--no-gir-cache</code> to skip caching.
-		</p>
 	</section>
 
 	<section class="step">
 		<h2>5. Run your first program</h2>
-		<p>Create a file named <code>hello.gene</code> with the following contents:</p>
-		<pre aria-label="Hello world in Gene">
-<code class="language-gene"># hello.gene
-(print "Hello from Gene!")</code>
-		</pre>
-		<p>Execute the program with:</p>
+		<p>Create a file named <code>hello.gene</code>:</p>
+		<CodeRunner code={helloCode} />
+		<p>Execute it from the command line:</p>
 		<pre aria-label="Run a Gene program">
 <code class="language-bash">./bin/gene run hello.gene</code>
 		</pre>
+		<p>
+			Or click <strong>▶ Run</strong> above to evaluate it live in your browser via WASM.
+		</p>
 	</section>
 
 	<section class="step">
-		<h2>6. Explore Gene's unique features</h2>
-		<p>Gene's power comes from its unified data structure. Try these examples to see it in action:</p>
+		<h2>6. Explore core features</h2>
+		<p>
+			Gene's homoiconic design means code and data share the same structure. Try these examples —
+			each has a <strong>▶ Run</strong> button to evaluate in the browser.
+		</p>
 
-		<h3>The Gene Data Structure</h3>
-		<pre aria-label="Gene data structure example">
-<code class="language-gene"># data.gene - Gene combines type, properties, and children
-(User ^id 123 ^active true "Alice" "alice@example.com" 30)
+		<h3>Variables, closures &amp; collections</h3>
+		<CodeRunner code={featuresCode} />
 
-# Access properties and children with /
-(var user (User ^id 123 ^name "Alice"))
-(println user/id)      # => 123
-(println user/name)    # => Alice</code>
-		</pre>
-
-		<h3>Functions and Control Flow</h3>
-		<pre aria-label="Gene functions example">
-<code class="language-gene"># functions.gene - Define and use functions
-(fn greet [name: String] -> String
-  ^description "Greets a person by name"
-  ^intent "Create friendly greeting"
-  ("Hello, " .append name .append "!")
-)
-
-(fn factorial [n: Int] -> Int
-  (if (n <= 1)
-    1
-  else
-    (n * (factorial (n - 1)))
-  )
-)
-
-(println (greet "World"))
-(println "5! =" (factorial 5))</code>
-		</pre>
-
-		<h3>Collection Methods</h3>
-		<pre aria-label="Gene collection methods example">
-<code class="language-gene"># Collections with .map, .filter, .reduce
-(var numbers [1 2 3 4 5])
-
-# Double each number
-(var doubled (numbers .map (fn [x: Int] -> Int (x * 2))))
-
-# Filter numbers greater than 2
-(var big (numbers .filter (fn [x] (x > 2))))
-
-# Sum all numbers
-(var sum (numbers .reduce 0 (fn [acc x] (acc + x))))</code>
-		</pre>
+		<h3>Classes &amp; OOP</h3>
+		<CodeRunner code={classCode} />
 	</section>
 
 	<section class="step">
 		<h2>Where to go next</h2>
 		<ul class="next-steps">
 			<li>
-				Read the <a href="/docs">documentation</a> for macros, classes, and advanced async patterns.
-			</li>
-			<li>Browse the <a href="/examples">examples gallery</a> for idiomatic patterns and AI-friendly code structures.</li>
-			<li>
-				Experiment with Gene's homoiconic design — try generating code programmatically using the same data structures.
+				Browse the <a href="/examples">examples gallery</a> — click ▶ Run on any example to evaluate
+				it live in the browser.
 			</li>
 			<li>
-				Check <code>gene/docs/</code> in the repository for additional architecture and design documents.
+				Read the <a href="/docs">documentation</a> for generators, AOP, capability sandboxing, and
+				checkpoint/resume.
+			</li>
+			<li>
+				Explore <code>examples/full.gene</code> in the repository — a 700-line runnable reference
+				covering every language feature.
+			</li>
+			<li>
+				Run <code>./bin/gene repl</code> for an interactive shell with breakpoint support and
+				<code>--repl-on-error</code> mode.
 			</li>
 		</ul>
 	</section>
@@ -219,9 +210,9 @@ nimble speedy</code>
 	}
 
 	.step h3 {
-		margin-top: 1.5rem;
-		margin-bottom: 0.5rem;
-		font-size: 1.2rem;
+		margin-top: 1.75rem;
+		margin-bottom: 0.25rem;
+		font-size: 1.15rem;
 		color: var(--color-accent);
 	}
 
@@ -236,6 +227,7 @@ nimble speedy</code>
 		color: var(--color-muted);
 		display: grid;
 		gap: 0.5rem;
+		max-width: 46rem;
 	}
 
 	.next-steps {
@@ -248,6 +240,7 @@ nimble speedy</code>
 	}
 
 	pre {
-		margin-top: 1rem;
+		margin-top: 0.75rem;
+		margin-bottom: 0.75rem;
 	}
 </style>

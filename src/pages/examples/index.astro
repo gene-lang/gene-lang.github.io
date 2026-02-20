@@ -1,140 +1,269 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import CodeRunner from '../../components/CodeRunner.astro';
 
 const examples = [
 	{
-		title: 'Gene Data Structure',
-		description: 'The unique Gene data structure combines type, properties, and children in one unified format.',
-		code: `# Gene's unified data structure: (type ^prop value child1 child2)
-(var user (User ^id 123 ^active true "Alice" "alice@example.com"))
+		title: 'Syntax & Types',
+		description:
+			'Primitives, string interpolation, arrays, maps, and arithmetic with operator precedence.',
+		code: `# Primitives and string interpolation
+(var name "Gene")
+(var year 2026)
+(println "Hello from #{name} (#{year})!")
 
-# Access with / operator
-(println user/id)       # => 123
-(println user/active)   # => true
+# Arithmetic with operator precedence
+(println (5 + 3 * 2))        # => 11
+(println (2 ** 10))           # => 1024
+(println (10 % 3))            # => 1
 
-# Properties are key-value pairs, children are positional
-(var config (Config ^env "production" ^debug false "database" "cache"))`,
+# Arrays and maps
+(var arr [1 2 3 4 5])
+(var m {^lang "Gene" ^year 2026})
+(println arr/2 m/lang)        # => 3 Gene
+(println arr/.length)         # => 5
+
+# Nil-safe property access
+(var obj nil)
+(println obj/x)               # => nil (no crash)`,
 	},
 	{
-		title: 'Code as Data (Homoiconic)',
-		description: 'Code and data share the same structure, enabling powerful metaprogramming.',
-		code: `# This is data - use backtick to quote
-(var person \\\`(Person ^name "Alice" ^age 30))
+		title: 'Homoiconic Design',
+		description:
+			'Code and data share the same structure. Quote with ` to treat any expression as data.',
+		code: `# Quote with \` preserves structure as data
+(var expr \`(if (x > 0) "positive" else "negative"))
+(println expr)
 
-# This is code (same structure!)
-(fn greet [person: Any]
-  ^description "Greet a person"
-  (println "Hello," person/name)
-)
+# Symbols are first-class values
+(var sym \`success)
+(println (sym == \`success))   # => true
 
-# Manipulate code as data
-(var expr \\\`(if (x > 0) "positive" else "negative"))
-(println "Expression type:" expr/.type)     # => if
-(println "First child:" expr/.children/0)   # => (x > 0)`,
+# The Gene data structure: (Type ^prop val child...)
+(var user \`(User ^name "Alice" ^age 30 "admin"))
+(println user)
+
+# Everything follows the same pattern:
+# data, code, configs, function calls — all one structure`,
 	},
 	{
-		title: 'Collection Methods',
-		description: 'Built-in collection methods make data processing elegant and functional.',
-		code: `# Array methods: .map, .filter, .reduce
-(var numbers [1 2 3 4 5])
+		title: 'Functions & Closures',
+		description:
+			'Named functions, anonymous lambdas, closures, and higher-order collection methods.',
+		code: `# Named function
+(fn add [a b] (a + b))
+(println (add 3 4))          # => 7
 
-# Transform each element
-(var doubled (numbers .map (fn [x: Int] -> Int (x * 2))))
-# => [2 4 6 8 10]
+# Default parameters
+(fn greet [name = "World"]
+  (println "Hello, #{name}!"))
+(greet)                      # => Hello, World!
+(greet "Alice")              # => Hello, Alice!
 
-# Filter by condition
-(var big (numbers .filter (fn [x] (x > 2))))
-# => [2 4]
+# Closures capture their environment
+(fn make_adder [x]
+  (fn [y] (x + y)))
+(var add10 (make_adder 10))
+(println (add10 5))          # => 15
 
-# Reduce to single value
-(var sum (numbers .reduce 0 (fn [acc: Int x: Int] -> Int (acc + x))))
-# => 15
-
-# Two-step pipeline
-(var filtered (numbers .filter (fn [x] (x > 2))))
-(var result (filtered .map (fn [x] (x * 3))))`,
+# Higher-order collection methods
+(var nums [1 2 3 4 5])
+(println (nums .map (fn [x] (x * 2))))          # => [2 4 6 8 10]
+(println (nums .filter (fn [x] (x > 3))))       # => [4 5]
+(println (nums .reduce 0 (fn [acc x] (acc + x))))  # => 15`,
 	},
 	{
-		title: 'Functions with Metadata',
-		description: 'Functions can include metadata like ^intent and ^examples for documentation.',
-		code: `# Function with intent and examples metadata
-(fn factorial [n: Int] -> Int
-  ^description "Computes factorial recursively"
-  ^intent "Calculate n! = n * (n-1) * ... * 1"
-  ^examples [
-    {^input 5 ^output 120}
-    {^input 0 ^output 1}
-  ]
-  (if (n <= 1)
-    1
-  else
-    (n * (factorial (n - 1)))
-  )
-)
+		title: 'Classes & Inheritance',
+		description:
+			'Object-oriented programming with constructors, methods, inheritance, and super calls.',
+		code: `(class Animal
+  (ctor [name]
+    (/name = name))
+  (method speak []
+    "..."))
 
-# Run examples with: gene run-examples factorial.gene
-# This validates the function against its ^examples`,
-	},
-	{
-		title: 'Class Inheritance & OOP',
-		description: 'Object-oriented programming with classes, inheritance, and methods.',
-		code: `# Base class
-(class Animal
-  (ctor [name: String]
-    (/name = name)
-  )
-  (method speak _
-    (println /name "makes a sound")
-  )
-)
-
-# Derived class with inheritance
 (class Dog < Animal
-  (ctor [name: String breed: String]
-    (super .ctor name)  # Call parent constructor
-    (/breed = breed)
-  )
-  (method speak _
-    (println /name "barks! Breed:" /breed)
-  )
-)
+  (method speak []
+    ("Woof! I am " .append /name)))
 
-(var dog (new Dog "Max" "Golden Retriever"))
-(dog .speak)  # => Max barks! Breed: Golden Retriever`,
+(class LoudDog < Dog
+  (method speak []
+    ((super .speak) .append "!!!")))
+
+(var dog (new LoudDog "Rex"))
+(println dog/.speak)         # => Woof! I am Rex!!!
+(println (dog is Animal))    # => true
+(println (dog is Dog))       # => true
+
+# Abstract methods enforce interface contracts
+(class Shape
+  (abstract method area []))
+(try
+  ((new Shape) .area)
+catch _
+  (println "abstract call caught:" $ex))`,
 	},
 	{
-		title: 'Dynamic Property Access',
-		description: 'Access object properties and array indices dynamically at runtime.',
-		code: `# Dynamic array access
-(var arr [10 20 30 40])
-(var index 2)
-(println arr/index)  # => 30 (same as arr/2)
+		title: 'Generators',
+		description:
+			'Lazy sequences with fn* and yield. Generators produce values on demand via for-in.',
+		code: `# Generator function uses fn* and yield
+(fn* range [start end]
+  (var i start)
+  (loop
+    (if (i >= end) (break))
+    (yield i)
+    (i += 1)))
 
-# Dynamic map access
-(var person {^name "Alice" ^age 30 ^city "NYC"})
-(var key \\\`age)
-(println person/key)  # => 30
+# Iterate lazily over generated values
+(for i in (range 0 5)
+  (print i " "))             # => 0 1 2 3 4
+(println)
 
-# Nested dynamic access
-(var data {^users [{^name "Alice"} {^name "Bob"}]})
-(var i 0)
-(println data/users/i/name)  # => Alice
+# Squares generator
+(fn* squares [n]
+  (var i 0)
+  (loop
+    (if (i >= n) (break))
+    (yield (i * i))
+    (i += 1)))
 
-# Use with collection methods
-(var fields [\\\`name \\\`age \\\`city])
-(fields .map (fn [field: Any] -> Any (person/field)))`,
+(for s in (squares 6)
+  (print s " "))             # => 0 1 4 9 16 25
+(println)
+
+# Range literal syntax
+(for i in (1 .. 5)
+  (print i " "))             # => 1 2 3 4 5
+(println)`,
+	},
+	{
+		title: 'Pattern Matching',
+		description:
+			'case/when for value matching, if as an expression, and for-in with index destructuring.',
+		code: `# case/when matches values
+(fn describe [n]
+  (case n
+    when 0 "zero"
+    when 1 "one"
+    when 2 "two"
+    else "many"))
+
+(println (describe 0))       # => zero
+(println (describe 2))       # => two
+(println (describe 99))      # => many
+
+# if is an expression — assign the result directly
+(var score 85)
+(var grade
+  (if (score >= 90) "A"
+   elif (score >= 80) "B"
+   elif (score >= 70) "C"
+   else "F"))
+(println "Grade:" grade)     # => B
+
+# for-in with index destructuring
+(var fruits ["apple" "banana" "cherry"])
+(for [i item] in fruits
+  (println i ":" item))`,
+	},
+	{
+		title: 'AOP Decorators',
+		description:
+			'Aspect-oriented programming with before/around/after advices and reusable aspect bundles.',
+		code: `# Define a plain function
+(fn compute [a b]
+  (a + b))
+
+# before advice runs before the function body
+(before compute [a b]
+  (println "→ computing" a "+" b))
+
+# after advice receives the return value
+(after compute [a b result]
+  (println "← result:" result))
+
+# Calling compute now fires all advices
+(compute 3 4)
+# → computing 3 + 4
+# ← result: 7
+
+(println (compute 10 20))
+# → computing 10 + 20
+# ← result: 30
+# 30`,
+	},
+	{
+		title: 'Enums & Error Handling',
+		description:
+			'Algebraic data types with enums, typed catch blocks, and the $ex special variable.',
+		code: `# Algebraic data types
+(enum Option
+  (Some value)
+  None)
+
+(enum Result
+  (Ok value)
+  (Err error))
+
+(var found (Option/Some 42))
+(var missing Option/None)
+
+(println found/tag found/values/0)   # => Some 42
+(println missing/tag)                # => None
+
+# Typed exception handling
+(fn safe_div [a b]
+  (try
+    (if (b == 0)
+      (throw "Division by zero"))
+    (a / b)
+  catch String
+    (println "Caught:" $ex)
+    nil))
+
+(println (safe_div 10 2))    # => 5
+(println (safe_div 10 0))    # => nil (caught "Division by zero")`,
+	},
+	{
+		title: 'Async / Await',
+		description:
+			'First-class async/await with futures. Works in both native and WASM environments.',
+		code: `# async wraps a value in a future
+(var f (async 42))
+(var result (await f))
+(println "async result:" result)   # => 42
+
+# Chained async computation
+(fn async_add [a b]
+  (async (a + b)))
+
+(var sum (await (async_add 10 20)))
+(println "async sum:" sum)         # => 30
+
+# Async with computation
+(fn compute_async [n]
+  (async
+    (var result 0)
+    (for i in (1 .. n)
+      (result += i))
+    result))
+
+(println "sum 1..10:" (await (compute_async 10)))  # => 55`,
 	},
 ];
 ---
 
 <Layout
 	title="Gene Code Examples"
-	description="Curated Gene code snippets that demonstrate looping, lightweight objects, and async workflows."
+	description="Runnable Gene code examples. Click ▶ Run to evaluate any example live in your browser via WASM."
 >
 	<header class="page-header">
 		<h1>Examples</h1>
 		<p>
-			Explore Gene's AI-friendly design through practical examples. Each snippet showcases how Gene's homoiconic structure makes it ideal for code generation, transformation, and AI reasoning. The uniform syntax pattern makes it predictable for both humans and AI systems.
+			Runnable Gene code snippets — click <strong>▶ Run</strong> on any example to evaluate it live in
+			your browser via WASM. I/O operations (file access, threads) are capability-gated and will show
+			an error in the browser, which is expected.
 		</p>
 	</header>
 
@@ -143,19 +272,17 @@ const examples = [
 			<article class="example-card">
 				<h2>{example.title}</h2>
 				<p>{example.description}</p>
-				<pre aria-label={`Example: ${example.title}`}>
-<code class="language-gene">{example.code}</code>
-				</pre>
+				<CodeRunner code={example.code} />
 			</article>
 		))}
 	</section>
 
 	<section class="note">
-		<strong>AI-First Design Benefits</strong>
+		<strong>Browser Playground</strong>
 		<span>
-			Notice how every Gene construct follows the same pattern: <code>(type ^properties children)</code>.
-			This consistency makes Gene perfect for AI code generation and reasoning. Try copying a snippet
-			into a <code>.gene</code> file and run it with <code>./bin/gene run</code> to see it in action.
+			All examples run client-side via the Gene WASM build — no server required. Operations that
+			require native capabilities (threads, file I/O, channels) will show an error in the browser,
+			which is intentional: the capability sandbox is working correctly.
 		</span>
 	</section>
 </Layout>
@@ -174,13 +301,13 @@ const examples = [
 
 	.page-header p {
 		color: var(--color-muted);
-		max-width: 46rem;
+		max-width: 50rem;
 		margin: 0;
 	}
 
 	.example-grid {
 		display: grid;
-		gap: 2rem;
+		gap: 2.5rem;
 	}
 
 	.example-card {
@@ -212,5 +339,9 @@ const examples = [
 		border-radius: 1rem;
 		padding: 1.2rem 1.5rem;
 		color: var(--color-muted);
+	}
+
+	.note strong {
+		color: var(--color-text);
 	}
 </style>

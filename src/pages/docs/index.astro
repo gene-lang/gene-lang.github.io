@@ -4,29 +4,50 @@ import Layout from '../../layouts/Layout.astro';
 const sections = [
 	{
 		title: 'Language fundamentals',
-		description: 'The Gene Data Structure, syntax, evaluation rules, macros, and the core library.',
+		description: 'Syntax, types, control flow, functions, closures, pattern matching, and macros.',
 		items: [
-			{ label: 'Gene Data Structure & principles', href: '/docs/language/principles' },
-			{ label: 'Recent Features & Enhancements', href: '/docs/language/recent-features' },
-			{ label: 'Macro system overview', href: '/docs/language/macros' },
+			{ label: 'The Gene data structure & homoiconic design', href: '/docs/language/gene-type' },
+			{ label: 'Types, variables & operators', href: '/docs/language/types' },
+			{ label: 'Functions, closures & higher-order programming', href: '/docs/language/functions' },
+			{ label: 'Classes, inheritance & abstract methods', href: '/docs/language/classes' },
+			{ label: 'Enums, ranges & algebraic data types', href: '/docs/language/enums' },
+			{ label: 'Pseudo macros & the $caller_eval API', href: '/docs/language/macros' },
+		],
+	},
+	{
+		title: 'Advanced features',
+		description:
+			'Generators, async/await, AOP decorators, modules, nil-safe navigation, and gradual typing.',
+		items: [
+			{ label: 'Generators — fn* and yield', href: '/docs/advanced/generators' },
+			{ label: 'Async/await & futures', href: '/docs/advanced/async' },
+			{ label: 'AOP — before/around/after advices & aspects', href: '/docs/advanced/aop' },
+			{ label: 'Modules & namespaces', href: '/docs/advanced/modules' },
+			{ label: 'Nil-safe navigation & selectors', href: '/docs/advanced/nil-safety' },
+			{ label: 'Gradual typing & type annotations', href: '/docs/advanced/types' },
 		],
 	},
 	{
 		title: 'Runtime & architecture',
-		description: 'Compiler pipeline, bytecode VM with ~7.5M calls/sec, and GIR caching.',
+		description:
+			'NaN-boxed VM internals, capability sandboxing, checkpoint/resume, threads, and WASM.',
 		items: [
-			{ label: 'Bytecode VM internals', href: '/docs/runtime/vm' },
-			{ label: 'GIR (Gene IR) format', href: '/docs/runtime/gir' },
-			{ label: 'Performance tuning', href: '/docs/runtime/performance' },
+			{ label: 'NaN-boxed value system & bytecode VM', href: '/docs/runtime/vm' },
+			{ label: 'Capability-based sandboxing', href: '/docs/runtime/capabilities' },
+			{ label: 'Native threads & channels', href: '/docs/runtime/threads' },
+			{ label: 'Checkpoint & resume — VM state serialization', href: '/docs/runtime/checkpoint' },
+			{ label: 'Deterministic mode & seeded RNG', href: '/docs/runtime/deterministic' },
+			{ label: 'WASM build & browser playground', href: '/docs/runtime/wasm' },
 		],
 	},
 	{
 		title: 'Standard library',
-		description: 'Built-in modules, collections, async primitives, and File I/O.',
+		description: 'Built-in functions, file I/O, string methods, and the tool calling API.',
 		items: [
-			{ label: 'Core modules', href: '/docs/library/core' },
-			{ label: 'Async & io namespace', href: '/docs/library/async' },
-			{ label: 'Interop & FFI', href: '/docs/library/ffi' },
+			{ label: 'Core — print, str, len, typeof, sqrt', href: '/docs/library/core' },
+			{ label: 'File I/O — capability-gated fs/* functions', href: '/docs/library/fs' },
+			{ label: 'Tool calling API', href: '/docs/library/tools' },
+			{ label: 'String methods', href: '/docs/library/strings' },
 		],
 	},
 ];
@@ -34,19 +55,21 @@ const sections = [
 
 <Layout
 	title="Gene Documentation"
-	description="Browse language guides, VM architecture notes, and standard library references for the Gene programming language."
+	description="Language guides, VM architecture, capability sandboxing, checkpoint/resume, and standard library references for the Gene programming language."
 >
 	<header class="page-header">
 		<h1>Documentation</h1>
 		<p>
-			The Gene docs are being ported from the core repository to this website. Start with the language fundamentals,
-			then explore architecture guides that dissect the compiler and bytecode virtual machine.
+			Gene is an AI-native language with a NaN-boxed bytecode VM, homoiconic design, capability
+			sandboxing, generators, AOP decorators, and first-class async/await. The docs below cover the
+			full feature set.
 		</p>
 		<div class="callout">
-			<strong>Looking for a specific topic?</strong>
+			<strong>Quick start</strong>
 			<span>
-				Check the <code>gene/docs/</code> directory in the repository while the migration is underway. Each document
-				will be published here as it is reviewed and updated.
+				The authoritative feature reference is <code>examples/full.gene</code> in the repository — a
+				700-line runnable file that covers every language feature with inline comments.
+				Visit <a href="/examples">the Examples page</a> to run snippets live in your browser.
 			</span>
 		</div>
 	</header>
@@ -70,10 +93,10 @@ const sections = [
 	<section class="contribute">
 		<h2>Help improve the docs</h2>
 		<p>
-			Found a gap? Open an issue or pull request via the OpenSpec workflow. Contributions are welcome for tutorials,
+			Found a gap? Open an issue or pull request. Contributions are welcome for tutorials,
 			examples, and architecture notes.
 		</p>
-                <a class="button primary" href="https://github.com/gene-lang/gene" rel="noopener">Contribute on GitHub</a>
+		<a class="button primary" href="https://github.com/gcao/genex" rel="noopener">Contribute on GitHub</a>
 	</section>
 </Layout>
 
@@ -90,7 +113,7 @@ const sections = [
 	}
 
 	.page-header p {
-		max-width: 46rem;
+		max-width: 50rem;
 		color: var(--color-muted);
 		margin: 0;
 	}
@@ -103,10 +126,11 @@ const sections = [
 		border-radius: 1rem;
 		padding: 1.2rem 1.5rem;
 		box-shadow: 0 16px 30px rgba(15, 23, 42, 0.15);
+		max-width: 50rem;
 	}
 
 	.callout strong {
-		font-size: 0.95rem;
+		font-size: 0.85rem;
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
 		color: var(--color-muted);
@@ -147,6 +171,11 @@ const sections = [
 		margin: 0;
 		display: grid;
 		gap: 0.6rem;
+		columns: 2;
+	}
+
+	.section-card li {
+		break-inside: avoid;
 	}
 
 	.section-card li a {
@@ -154,6 +183,7 @@ const sections = [
 		display: inline-flex;
 		align-items: center;
 		gap: 0.35rem;
+		font-size: 0.95rem;
 	}
 
 	.section-card li a::after {
@@ -191,5 +221,11 @@ const sections = [
 		background: var(--color-accent);
 		color: white;
 		box-shadow: 0 12px 24px rgba(37, 99, 235, 0.2);
+	}
+
+	@media (max-width: 600px) {
+		.section-card ul {
+			columns: 1;
+		}
 	}
 </style>

@@ -1,34 +1,35 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import CodeRunner from '../components/CodeRunner.astro';
 
 const featureHighlights = [
 	{
 		title: 'The Gene Data Structure',
 		description:
-			'A unique tagged S-expression with type, properties, and children — the heart of Gene that enables homoiconicity and powerful DSLs.',
+			'A unique tagged S-expression: type + properties + children in one value. Uniform structure makes code and data indistinguishable — ideal for AI generation and metaprogramming.',
 	},
 	{
-		title: 'High-Performance VM',
+		title: 'NaN-boxed Bytecode VM',
 		description:
-			'Achieve ~3.8M function calls/sec with a Nim-based bytecode VM featuring NaN-boxed 8-byte values and computed-goto dispatch.',
+			'Every value fits in 8 bytes via NaN-boxing. A Nim-powered stack VM with computed-goto dispatch delivers ~30× the performance of Python on class dispatch benchmarks.',
 	},
 	{
-		title: 'AI-First Design',
+		title: 'AI-Native Runtime',
 		description:
-			'Homoiconic structure makes Gene ideal for AI code generation and reasoning. Code and data share the same representation.',
+			'Capability-based sandboxing, tool calling, checkpoint/resume, deterministic mode, and WASM support — primitives that make Gene a first-class execution environment for AI agents.',
 	},
 ];
 
 const ecosystem = [
 	{
 		title: 'Language Reference',
-		description: 'Dive into the syntax, semantics, and runtime behavior of Gene.',
+		description: 'Dive into the syntax, semantics, and runtime behaviour of Gene.',
 		href: '/docs',
 	},
 	{
-		title: 'Tutorials',
-		description: 'Follow structured guides that walk through building real Gene programs.',
-		href: '/tutorials',
+		title: 'Examples',
+		description: 'Runnable code snippets — click ▶ Run to evaluate any example in the browser.',
+		href: '/examples',
 	},
 	{
 		title: 'Community',
@@ -36,30 +37,48 @@ const ecosystem = [
 		href: '/community',
 	},
 ];
+
+const showcaseCode = `# Variables & string interpolation
+(var name "Gene")
+(var year 2026)
+(println "Welcome to #{name} (#{year})!")
+
+# Closures capture their environment
+(fn make_adder [x]
+  (fn [y] (x + y)))
+(var add10 (make_adder 10))
+(println (add10 5))          # => 15
+
+# Built-in collection methods
+(var nums [1 2 3 4 5])
+(println (nums .map (fn [x] (x * 2))))       # => [2 4 6 8 10]
+(println (nums .filter (fn [x] (x > 3))))    # => [4 5]
+(println (nums .reduce 0 (fn [acc x] (acc + x))))  # => 15`;
 ---
 
-<Layout title="Gene Programming Language" description="Gene is a modern Lisp with a bytecode VM, expressive macros, and a growing ecosystem.">
+<Layout title="Gene Programming Language" description="Gene is an AI-native Lisp with a NaN-boxed bytecode VM, homoiconic design, capability sandboxing, and WASM support.">
 	<section class="hero">
 		<div class="hero-content">
 			<p class="eyebrow">Introducing Gene</p>
-			<h1>AI-first Lisp with homoiconic design and systems-level performance.</h1>
+			<h1>AI-native Lisp with homoiconic design and systems-level performance.</h1>
 			<p class="lead">
-				Gene pairs the elegance of Lisp syntax with AI-friendly homoiconicity. Code is data, data is code — making it ideal for AI code generation, transformation, and reasoning. Target a fast bytecode VM with async support.
+				Gene pairs the elegance of Lisp syntax with an AI-native runtime. Code is data, data is code.
+				Run it natively, in the browser via WASM, or hand it to an AI agent with full capability sandboxing.
 			</p>
 			<div class="cta-group">
 				<a class="button primary" href="/getting-started">Start building</a>
-				<a class="button secondary" href="/docs">Browse docs</a>
+				<a class="button secondary" href="/examples">Try examples</a>
 			</div>
 		</div>
 		<div class="hero-spotlight">
 			<h2>Why Gene?</h2>
 			<ul>
-				<li><strong>AI-friendly homoiconicity</strong> — code and data share identical structure</li>
-				<li><strong>Unique data structure</strong> — type + properties + children in one</li>
-				<li><strong>Easy AI code generation</strong> — uniform syntax perfect for LLM output</li>
-				<li><strong>Powerful macro system</strong> — transform code at compile-time with full AST access</li>
-				<li><strong>Real async/await</strong> — event loop integration for concurrent programming</li>
-				<li><strong>Fast bytecode VM</strong> — 3.8M function calls/sec with NaN-boxed values</li>
+				<li><strong>Homoiconic design</strong> — code and data share identical structure</li>
+				<li><strong>NaN-boxed VM</strong> — ~30× faster than Python on class dispatch</li>
+				<li><strong>Gradual typing</strong> — annotate as much or as little as you want</li>
+				<li><strong>AOP built-in</strong> — before/around/after decorators &amp; aspect bundles</li>
+				<li><strong>Capability sandboxing</strong> — deny-by-default, parameterized permissions</li>
+				<li><strong>Checkpoint/resume</strong> — save and replay full VM state</li>
 			</ul>
 		</div>
 	</section>
@@ -79,30 +98,10 @@ const ecosystem = [
 	<section class="code-showcase">
 		<h2>Gene in action</h2>
 		<p>
-			Gene's unique data structure combines type, properties, and children in one unified format.
-			This makes it perfect for AI code generation and reasoning — everything follows the same pattern.
+			Every Gene construct follows the same pattern: <code>(type ^properties children)</code>.
+			Click <strong>▶ Run</strong> to evaluate the example live in your browser via WASM.
 		</p>
-		<pre aria-label="Gene code example">
-<code class="language-gene"># Gene's unified data structure: (type ^prop value child1 child2)
-(Person ^name "Alice" ^age 30 "Engineer" "Loves coding")
-
-# Code uses the same structure - homoiconic design!
-(fn factorial [n: Int] -> Int
-  ^description "Classic recursive factorial"
-  ^complexity "O(n)"
-  ^intent "Compute factorial of n"
-  (if (n <= 1)
-    1
-  else
-    (n * (factorial (n - 1)))
-  )
-)
-
-# Collection methods with standard operators
-(var nums [1 2 3 4 5])
-(var doubled (nums .map (fn [x: Int] -> Int (x * 2))))
-(var big (nums .filter (fn [x] (x > 2))))</code>
-		</pre>
+		<CodeRunner code={showcaseCode} />
 	</section>
 
 	<section class="ecosystem">
@@ -121,11 +120,11 @@ const ecosystem = [
 	<section class="community-invite">
 		<h2>Open source and community-driven</h2>
 		<p>
-			Gene is crafted in the open. Share feedback, propose specs, and help shape the language runtime, compiler,
-			and tools.
+			Gene is crafted in the open. Share feedback, propose specs, and help shape the language runtime,
+			compiler, and tools.
 		</p>
-                <a class="button primary" href="https://github.com/gene-lang/gene" rel="noopener">
-			Contribute on GitHub
+		<a class="button primary" href="https://github.com/gcao/genex" rel="noopener">
+			View on GitHub
 		</a>
 	</section>
 </Layout>
@@ -267,6 +266,7 @@ const ecosystem = [
 	.code-showcase p {
 		max-width: 42rem;
 		color: var(--color-muted);
+		margin-bottom: 0;
 	}
 
 	.ecosystem {
