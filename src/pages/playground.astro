@@ -1,0 +1,523 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const presets = [
+	{
+		id: 'empty',
+		label: 'Empty',
+		init: '',
+		active: '# Write your Gene code here\n(println "Hello, Gene!")',
+	},
+	{
+		id: 'math',
+		label: 'Math Utilities',
+		init: `# Numeric utility functions
+(fn abs [x]
+  (if (x < 0) (x * -1) else x))
+
+(fn max [a b]
+  (if (a > b) a else b))
+
+(fn min [a b]
+  (if (a < b) a else b))
+
+(fn clamp [x lo hi]
+  (max lo (min hi x)))
+
+(fn sum [nums]
+  (nums .reduce 0 (fn [acc n] (acc + n))))`,
+		active: `(println (abs -5))           # => 5
+(println (max 3 7))           # => 7
+(println (min 3 7))           # => 3
+(println (clamp 15 0 10))     # => 10
+(println (sum [1 2 3 4 5]))   # => 15`,
+	},
+	{
+		id: 'oop',
+		label: 'Classes & OOP',
+		init: `(class Shape
+  (ctor [color = "black"]
+    (/color = color))
+  (abstract method area [])
+  (method describe []
+    "A #{/color} shape with area #{/area}"))
+
+(class Circle < Shape
+  (ctor [radius color = "blue"]
+    (super color)
+    (/radius = radius))
+  (method area []
+    (3.14159 * /radius * /radius)))
+
+(class Rect < Shape
+  (ctor [w h color = "red"]
+    (super color)
+    (/w = w)
+    (/h = h))
+  (method area []
+    (/w * /h)))`,
+		active: `(var c (new Circle 5))
+(println c/.area)             # => 78.53975
+(println c/.describe)
+
+(var r (new Rect 4 6))
+(println r/.area)             # => 24
+(println r/.describe)
+
+(println (c is Shape))        # => true`,
+	},
+	{
+		id: 'generators',
+		label: 'Generators',
+		init: `(fn* range [start end]
+  (var i start)
+  (loop
+    (if (i >= end) (break))
+    (yield i)
+    (i += 1)))
+
+(fn* squares [n]
+  (var i 0)
+  (loop
+    (if (i >= n) (break))
+    (yield (i * i))
+    (i += 1)))
+
+(fn* fibonacci [limit]
+  (var a 0)
+  (var b 1)
+  (loop
+    (if (a >= limit) (break))
+    (yield a)
+    (var next (a + b))
+    (a = b)
+    (b = next)))`,
+		active: `# Range 0..9
+(for i in (range 0 10)
+  (print i " "))
+(println)
+
+# First 6 squares
+(for s in (squares 6)
+  (print s " "))
+(println)
+
+# Fibonacci below 100
+(for n in (fibonacci 100)
+  (print n " "))
+(println)`,
+	},
+	{
+		id: 'enums',
+		label: 'Enums & Error Handling',
+		init: `(enum Option
+  (Some value)
+  None)
+
+(enum Result
+  (Ok value)
+  (Err message))
+
+(fn safe_div [a b]
+  (try
+    (if (b == 0)
+      (throw "Division by zero"))
+    (Result/Ok (a / b))
+  catch String
+    (Result/Err $ex)))
+
+(fn safe_head [arr]
+  (if (arr/.length == 0)
+    Option/None
+    (Option/Some arr/0)))`,
+		active: `(var r1 (safe_div 10 2))
+(println r1/tag r1/values/0)  # => Ok 5
+
+(var r2 (safe_div 10 0))
+(println r2/tag r2/values/0)  # => Err Division by zero
+
+(var h1 (safe_head [42 43 44]))
+(println h1/tag h1/values/0)  # => Some 42
+
+(var h2 (safe_head []))
+(println h2/tag)               # => None`,
+	},
+	{
+		id: 'async',
+		label: 'Async / Await',
+		init: `(fn async_add [a b]
+  (async (a + b)))
+
+(fn async_sum [nums]
+  (async
+    (nums .reduce 0 (fn [acc x] (acc + x)))))
+
+(fn compute_to [n]
+  (async
+    (var result 0)
+    (for i in (1 .. n)
+      (result += i))
+    result))`,
+		active: `(var sum (await (async_add 10 20)))
+(println "10 + 20 =" sum)
+
+(var total (await (async_sum [1 2 3 4 5])))
+(println "sum of [1..5] =" total)
+
+(println "1..10 sum:" (await (compute_to 10)))`,
+	},
+];
+
+const defaultInit = '';
+const defaultActive = '# Write your Gene code here\n(println "Hello, Gene!")';
+---
+
+<Layout
+	title="Gene Playground"
+	description="Interactive Gene programming language playground. Write and run Gene code live in your browser via WASM."
+>
+	<header class="page-header">
+		<h1>Playground</h1>
+		<p>
+			Write and run Gene code live in your browser — no install needed. Init code runs before
+			every execution, use it to define shared functions and types.
+		</p>
+	</header>
+
+	<div class="playground">
+		<!-- Init Code Panel -->
+		<section class="pg-panel" aria-label="Init code">
+			<div class="pg-panel-header">
+				<h2 class="pg-panel-title">Init Code</h2>
+				<div class="pg-panel-actions">
+					<select id="pg-preset" class="pg-select" aria-label="Load a preset">
+						<option value="">— Preset examples —</option>
+						{presets.map((p) => (
+							<option value={p.id}>{p.label}</option>
+						))}
+					</select>
+					<button id="pg-session-btn" class="pg-btn" type="button">&#9654; Start new session</button>
+				</div>
+			</div>
+			<textarea
+				id="pg-init"
+				class="pg-editor"
+				spellcheck="false"
+				autocorrect="off"
+				autocapitalize="off"
+				placeholder="# Optional: define shared functions, classes, or variables here"
+				aria-label="Init code editor"
+			>{defaultInit}</textarea>
+			<div class="pg-output" id="pg-session-output" hidden>
+				<div class="pg-output-bar">
+					<span>Session Output</span>
+					<button class="pg-clear-btn" data-target="pg-session-output" type="button">&times; Clear</button>
+				</div>
+				<pre class="pg-output-pre" id="pg-session-pre"></pre>
+			</div>
+		</section>
+
+		<!-- Active Code Panel -->
+		<section class="pg-panel" aria-label="Active code">
+			<div class="pg-panel-header">
+				<h2 class="pg-panel-title">Active Code</h2>
+				<button id="pg-run-btn" class="pg-btn" type="button">&#9654; Run</button>
+			</div>
+			<textarea
+				id="pg-active"
+				class="pg-editor"
+				spellcheck="false"
+				autocorrect="off"
+				autocapitalize="off"
+				placeholder="# Write your Gene code here"
+				aria-label="Active code editor"
+			>{defaultActive}</textarea>
+		</section>
+
+		<!-- Run Output Panel -->
+		<div class="pg-output" id="pg-run-output" hidden>
+			<div class="pg-output-bar">
+				<span>Output</span>
+				<button class="pg-clear-btn" data-target="pg-run-output" type="button">&times; Clear</button>
+			</div>
+			<pre class="pg-output-pre" id="pg-run-pre"></pre>
+		</div>
+	</div>
+</Layout>
+
+<script is:inline define:vars={{ presets }}>
+(function () {
+	var initEl     = document.getElementById('pg-init');
+	var activeEl   = document.getElementById('pg-active');
+	var presetSel  = document.getElementById('pg-preset');
+	var sessionBtn = document.getElementById('pg-session-btn');
+	var runBtn     = document.getElementById('pg-run-btn');
+
+	var sessionOutput = document.getElementById('pg-session-output');
+	var sessionPre    = document.getElementById('pg-session-pre');
+	var runOutput     = document.getElementById('pg-run-output');
+	var runPre        = document.getElementById('pg-run-pre');
+
+	// Build a lookup map from preset id -> preset object
+	var presetMap = {};
+	presets.forEach(function (p) { presetMap[p.id] = p; });
+
+	// ── Preset dropdown ───────────────────────────────────────────────────────
+	presetSel.addEventListener('change', function () {
+		var p = presetMap[presetSel.value];
+		if (!p) return;
+		initEl.value   = p.init;
+		activeEl.value = p.active;
+		sessionOutput.hidden = true;
+		runOutput.hidden = true;
+	});
+
+	// ── Start new session ────────────────────────────────────────────────────
+	sessionBtn.addEventListener('click', function () {
+		var code = initEl.value.trim();
+		sessionOutput.hidden = false;
+		sessionPre.className = 'pg-output-pre';
+
+		if (!code) {
+			sessionPre.textContent = '(no init code — session ready)';
+			return;
+		}
+
+		sessionBtn.disabled = true;
+		sessionBtn.textContent = '\u27F3 Initializing\u2026';
+		sessionPre.textContent = '\u2026';
+
+		window.GeneRunner.run(code, function (result, isError) {
+			sessionPre.textContent = result || (isError ? '(error — no message)' : '(no output)');
+			sessionPre.className = isError ? 'pg-output-pre error' : 'pg-output-pre';
+			sessionBtn.disabled = false;
+			sessionBtn.textContent = '\u25B6 Start new session';
+		});
+	});
+
+	// ── Run active code ───────────────────────────────────────────────────────
+	runBtn.addEventListener('click', function () {
+		var init   = initEl.value.trim();
+		var active = activeEl.value.trim();
+		var combined = init ? init + '\n\n' + active : active;
+
+		runBtn.disabled = true;
+		runBtn.textContent = '\u27F3 Running\u2026';
+		runOutput.hidden = false;
+		runPre.textContent = '\u2026';
+		runPre.className = 'pg-output-pre';
+
+		window.GeneRunner.run(combined, function (result, isError) {
+			runPre.textContent = result || (isError ? '(error — no message)' : '(no output)');
+			runPre.className = isError ? 'pg-output-pre error' : 'pg-output-pre';
+			runBtn.disabled = false;
+			runBtn.textContent = '\u25B6 Run';
+		});
+	});
+
+	// ── Clear buttons ─────────────────────────────────────────────────────────
+	document.querySelectorAll('.pg-clear-btn').forEach(function (btn) {
+		btn.addEventListener('click', function () {
+			var targetId = btn.getAttribute('data-target');
+			var panel = document.getElementById(targetId);
+			if (panel) panel.hidden = true;
+		});
+	});
+
+	// ── Tab key in textareas ──────────────────────────────────────────────────
+	[initEl, activeEl].forEach(function (ta) {
+		ta.addEventListener('keydown', function (e) {
+			if (e.key !== 'Tab') return;
+			e.preventDefault();
+			var start = ta.selectionStart;
+			var end   = ta.selectionEnd;
+			ta.value = ta.value.substring(0, start) + '  ' + ta.value.substring(end);
+			ta.selectionStart = ta.selectionEnd = start + 2;
+		});
+	});
+})();
+</script>
+
+<style>
+	.page-header {
+		display: grid;
+		gap: 0.75rem;
+		margin-bottom: 2.5rem;
+	}
+
+	.page-header h1 {
+		margin: 0;
+		font-size: clamp(2.1rem, 3vw, 2.7rem);
+	}
+
+	.page-header p {
+		color: var(--color-muted);
+		max-width: 52rem;
+		margin: 0;
+	}
+
+	/* ── Layout ────────────────────────────────────────────────────────────── */
+	.playground {
+		display: grid;
+		gap: 1.5rem;
+	}
+
+	/* ── Panel ─────────────────────────────────────────────────────────────── */
+	.pg-panel {
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+		border-radius: 1.1rem;
+		padding: 1.25rem 1.5rem 1.5rem;
+		box-shadow: 0 18px 32px rgba(15, 23, 42, 0.12);
+		display: grid;
+		gap: 0.85rem;
+	}
+
+	.pg-panel-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		flex-wrap: wrap;
+	}
+
+	.pg-panel-title {
+		margin: 0;
+		font-size: 1rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.07em;
+		color: var(--color-muted);
+	}
+
+	.pg-panel-actions {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		flex-wrap: wrap;
+	}
+
+	/* ── Select ────────────────────────────────────────────────────────────── */
+	.pg-select {
+		background: var(--color-bg);
+		color: var(--color-text);
+		border: 1px solid var(--color-border);
+		border-radius: 0.45rem;
+		padding: 0.3rem 0.65rem;
+		font-size: 0.82rem;
+		font-family: inherit;
+		cursor: pointer;
+		line-height: 1.5;
+	}
+
+	.pg-select:focus {
+		outline: 2px solid var(--color-accent);
+		outline-offset: 1px;
+	}
+
+	/* ── Buttons ───────────────────────────────────────────────────────────── */
+	.pg-btn {
+		background: var(--color-accent);
+		color: #fff;
+		border: none;
+		border-radius: 0.45rem;
+		padding: 0.3rem 0.85rem;
+		font-size: 0.82rem;
+		font-weight: 600;
+		font-family: inherit;
+		cursor: pointer;
+		line-height: 1.5;
+		transition: background 0.15s ease, opacity 0.15s ease;
+		white-space: nowrap;
+	}
+
+	.pg-btn:hover {
+		background: var(--color-accent-strong);
+	}
+
+	.pg-btn:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+	}
+
+	/* ── Editor textarea ───────────────────────────────────────────────────── */
+	.pg-editor {
+		font-family: 'DM Mono', 'Fira Code', 'SFMono-Regular', Menlo, Monaco, Consolas, monospace;
+		font-size: 0.92rem;
+		line-height: 1.65;
+		background: var(--color-bg);
+		color: var(--color-text);
+		border: 1px solid var(--color-border);
+		border-radius: 0.75rem;
+		padding: 1rem 1.25rem;
+		width: 100%;
+		min-height: 180px;
+		resize: vertical;
+		box-sizing: border-box;
+		box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.08);
+	}
+
+	.pg-editor:focus {
+		outline: 2px solid var(--color-accent);
+		outline-offset: 0;
+		border-color: transparent;
+	}
+
+	.pg-editor::placeholder {
+		color: var(--color-muted);
+		opacity: 0.6;
+	}
+
+	/* ── Output ────────────────────────────────────────────────────────────── */
+	.pg-output {
+		border: 1px solid var(--color-border);
+		border-radius: 0.75rem;
+		overflow: hidden;
+		background: var(--color-surface);
+	}
+
+	.pg-output-bar {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 0.35rem 1rem;
+		border-bottom: 1px solid var(--color-border);
+		font-size: 0.72rem;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: var(--color-muted);
+	}
+
+	.pg-clear-btn {
+		background: none;
+		border: none;
+		color: var(--color-muted);
+		cursor: pointer;
+		font-size: 0.78rem;
+		font-family: inherit;
+		padding: 0;
+		line-height: 1;
+	}
+
+	.pg-clear-btn:hover {
+		color: var(--color-text);
+	}
+
+	.pg-output-pre {
+		margin: 0;
+		padding: 0.85rem 1.25rem;
+		font-family: 'DM Mono', 'Fira Code', 'SFMono-Regular', Menlo, Monaco, Consolas, monospace;
+		font-size: 0.9rem;
+		color: var(--color-text);
+		white-space: pre-wrap;
+		word-break: break-word;
+		background: transparent;
+		border: none;
+		box-shadow: none;
+		line-height: 1.6;
+	}
+
+	.pg-output-pre.error {
+		color: #fca5a5;
+	}
+</style>

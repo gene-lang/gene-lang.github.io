@@ -105,4 +105,7 @@
     var panel = runner.querySelector('.cr-output');
     if (panel) panel.hidden = true;
   });
+
+  // ── Public API ─────────────────────────────────────────────────────────────
+  window.GeneRunner = { run: runCode };
 })();
